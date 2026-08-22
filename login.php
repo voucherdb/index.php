@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // 1. DATABASE CONFIGURATION (Pulls from your Railway Environment Variables)
 $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
