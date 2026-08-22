@@ -4,15 +4,12 @@ ini_set('display_errors', 1);
 
 // 1. DATABASE CONFIGURATION (Pulls from your Railway Environment Variables)
 $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+$db_port = getenv('MYSQLPORT') ?: '3306';
 $db_user = getenv('MYSQLUSER') ?: 'root';
 $db_pass = getenv('MYSQLPASSWORD') ?: 'uGMtUbozFJJSnBszScvdokEShYJWoMDn';
-$db_port = getenv('MYSQLPORT') ?: '3306';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-// AzamPay Credentials (Set these up in your Railway Variables Dashboard tab)
-$azampay_client_id = getenv('AZAMPAY_CLIENT_ID') ?: '678beae1-7761-47fb-8111-858fb60d7ad3';
-$azampay_secret_key = getenv('AZAMPAY_SECRET_KEY') ?: 'VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=';
-$azampay_app_name = getenv('AZAMPAY_APP_NAME') ?: 'Tanconnect';
+
 
 // 2. CAPTURE DATA SENT FROM INDEX.PHP
 $phone = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
@@ -52,7 +49,17 @@ try {
         $updateStmt = $pdo->prepare("UPDATE vouchers SET status = 'assigned', assigned_at = NOW(), transaction_id = :tx_id WHERE id = :id");
         $updateStmt->execute(['tx_id' => $internal_tx_id, 'id' => $voucher_id]);
         $pdo->commit();
-        
+
+
+
+ // AzamPay Credentials (Set these up in your Railway Variables Dashboard tab)
+$clientId = '678beae1-7761-47fb-8111-858fb60d7ad3';
+$secretKey = 'VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=';
+$appName = 'Tanconnect';
+$apiKey  = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
+$transactionId = 'WIFI-' . time();
+
+       
               // ==========================================
         // STEP 2b: GENERATE AZAMPAY OAUTH BEARER TOKEN (SANDBOX AUTO-CASING)
         // ==========================================
