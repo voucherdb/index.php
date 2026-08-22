@@ -109,7 +109,7 @@ curl_setopt($ch_auth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         $provider = "AzamPay";
         $prefix_3 = substr($cleanDigits, 3, 2);
         if (in_array($prefix_3, ['74', '75', '76', '14'])) { $provider = "Mpesa"; }
-        elseif (in_array($prefix_3, ['71', '77', '65', '07', '67', '72', '70'])) { $provider = "Tigopesa"; }
+        elseif (in_array($prefix_3, ['71', '77', '65', '07', '67', '72', '70'])) { $provider = "Tigo"; }
         elseif (in_array($prefix_3, ['78', '79', '68', '69'])) { $provider = "Airtel"; }
         elseif (in_array($prefix_3, ['62', '61'])) { $provider = "Halopesa"; }
         
