@@ -55,40 +55,8 @@ try {
     $voucher = $stmt->fetch();
     
     if (!$voucher) {
-
-<!DOCTYPE html>
-<html lang="sw">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANConnect - Uhaba wa Vifurushi</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 90vh; }
-        .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
-        .error-color { color: #e74c3c; font-size: 16px; font-weight: bold; margin-top: 15px; }
-        .btn-done { background: #3498db; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; text-transform: uppercase; transition: background 0.2s; }
-        .btn-done:hover { filter: brightness(0.9); }
-         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
-     
-    </style>
-</head>
-<body>
-
-<div class="receipt-card">
-    <!-- Top-corner Exit Close Button -->
-    <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
-
-    <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
-
-    <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
-    <div class="error-color">Uhaba wa Vifurushi Umejitokeza!</div>
-
-    <p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya TZS " . number_format($amount) . " Tafadhali jaribu vifurushi vingine."</p>
-    
-    <a href="index.php" class="btn-done" style="background: #e74c3c;">Jaribu</a>
-    <br><br><div class="footer">"We bring the world at your finger tips" </div></div>
-</body></html>
-
+        $pdo->rollBack();
+        $error_message = "Samahani, vocha za kiasi cha TZS " . number_format($amount) . " zimeisha kwa sasa. Tafadhali chagua kifurushi kingine.";
     } else {
         $voucher_id = $voucher['id'];
         $voucher_code = $voucher['voucher_code'];
@@ -157,6 +125,7 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
        
         // Crucial Sandbox note: Ensure your amount key parses string properties cleanly
        
+        
         $ch = curl_init($checkout_url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POST, true);
@@ -172,7 +141,6 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         curl_close($ch);
         
         $resData = json_decode($response, true);
-
         
         // ==========================================
         // STEP 4: EVALUATE RESULT
@@ -216,16 +184,13 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 <body>
 
 <div class="result-card">
-
     <?php if ($error_message): ?>
-
         <!-- ERROR DISPLAY -->
         <h3 class="error-title">Hitilafu ya Mtandao Imejitokeza! ❌</h3>
         <p style="color: #57606f; line-height: 1.5; margin-bottom: 25px;"><?php echo htmlspecialchars($error_message); ?></p>
         <button class="btn" onclick="window.history.back();">Rudi Nyuma</button>
 
     <?php else: ?>
-
         <!-- SUCCESS DISPLAY -->
         <h3 class="success-title">Malipo Yamefanikiwa! ✔</h3>
         <p style="color: #57606f; line-height: 1.5; font-size: 15px;">
