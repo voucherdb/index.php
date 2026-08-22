@@ -98,9 +98,9 @@ curl_setopt($chAuth, CURLOPT_TIMEOUT, 30);
 curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
         
-        $auth_response = curl_exec($ch_auth);
+        $auth_response = curl_exec($chAuth);
         $auth_data = json_decode($auth_response, true);
-        curl_close($ch_auth);
+        curl_close($chAuth);
         
         $access_token = null;
         if (isset($auth_data['data']['accessToken'])) { $access_token = $auth_data['data']['accessToken']; }
