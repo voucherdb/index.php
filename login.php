@@ -4,6 +4,7 @@ $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 $db_user = getenv('MYSQLUSER') ?: 'root';
 $db_pass = getenv('MYSQLPASSWORD') ?: 'uGMtUbozFJJSnBszScvdokEShYJWoMDn';
+$db_port = getenv('MYSQLPORT') ?: '3306';
 
 // AzamPay Credentials (Set these up in your Railway Variables Dashboard tab)
 $azampay_client_id = getenv('AZAMPAY_CLIENT_ID') ?: '678beae1-7761-47fb-8111-858fb60d7ad3';
@@ -40,7 +41,7 @@ try {
     
     if (!$voucher) {
         $pdo->rollBack();
-        $error_message = "Samahani, vocha za kiasi cha TZS " . number_format($amount) . " zimeisha kwa sasa. Tafadhali rudi nyuma na uchague kifurushi kingine.";
+        $error_message = "Samahani, vocha za kiasi cha TZS " . number_format($amount) . " zimeisha kwa sasa. Tafadhali chagua kifurushi kingine.";
     } else {
         $voucher_id = $voucher['id'];
         $voucher_code = $voucher['voucher_code'];
@@ -129,7 +130,7 @@ try {
         } else {
             $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
-            $error_message = "Muamala umeshindikana au umekataliwa kwenye simu yako. Tafadhali rudi nyuma na ujaribu tena.";
+            $error_message = "Muamala umeshindwa kufanyika. Tafadhali jaribu tena.";
             $voucher_code = null;
         }
     }
@@ -160,7 +161,7 @@ try {
 <div class="result-card">
     <?php if ($error_message): ?>
         <!-- ERROR DISPLAY -->
-        <h3 class="error-title">Hitilafu Imetokea! ❌</h3>
+        <h3 class="error-title">Hitilafu ya Mtandao Imejitokeza! ❌</h3>
         <p style="color: #57606f; line-height: 1.5; margin-bottom: 25px;"><?php echo htmlspecialchars($error_message); ?></p>
         <button class="btn" onclick="window.history.back();">Rudi Nyuma</button>
 
@@ -168,7 +169,7 @@ try {
         <!-- SUCCESS DISPLAY -->
         <h3 class="success-title">Malipo Yamefanikiwa! ✔</h3>
         <p style="color: #57606f; line-height: 1.5; font-size: 15px;">
-            Muamala wako umekamilika. Tafadhali <b>nakili (copy)</b> namba hii ya vocha hapa chini, kisha uibonyeze kwenye ukurasa wa router (HODI) ili kuunganishwa na mtandao wa TANConnect:
+            Muamala wako umekamilika. Tafadhali <b>nakili (copy)</b> namba hii ya vocha hapa chini, kisha utabonyeza (HODI) ili kuunganishwa na mtandao wa TANConnect.
         </p>
         
         <div class="voucher-box" id="voucherCode"><?php echo htmlspecialchars($voucher_code); ?></div>
