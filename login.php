@@ -138,10 +138,14 @@ try {
         }
     }
 } catch (Exception $e) {
-    if (isset($pdo) && $pdo->inTransaction()) { $pdo->rollBack(); }
-    $error_message = "Hitilafu imetokea wakati wa kuchakata malipo yako. Tafadhali jaribu tena baadae.";
+    if (isset($pdo) && $pdo->inTransaction()) { 
+        $pdo->rollBack(); 
+    }
+    // TEMPORARY DIAGNOSTIC MODE: Prints the exact line and error cause directly to the screen
+    $error_message = "HITILAFU YA KIUFUNDI (Line " . $e->getLine() . "): " . $e->getMessage() . " katika faili " . basename($e->getFile());
     $voucher_code = null;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="sw">
