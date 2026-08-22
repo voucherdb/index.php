@@ -56,13 +56,16 @@ try {
         // ==========================================
         // STEP 2b: GENERATE AZAMPAY OAUTH BEARER TOKEN (SANDBOX)
         // ==========================================
-        $auth_url = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
-        $auth_payload = [
-            "appName" => $appName,
-            "clientId" => $clientId,
-            "secretKey" => $secretKey
-        ];
-        
+        $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
+$authPayload = json_encode([
+    'appname'      => $appName,
+    'clientid'     => $clientId,
+    'clientsecret' => $secretKey
+]);
+
+       
+
+
         $ch_auth = curl_init($auth_url);
         curl_setopt($ch_auth, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch_auth, CURLOPT_POST, true);
