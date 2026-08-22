@@ -12,7 +12,7 @@ $azampay_app_name = getenv('AZAMPAY_APP_NAME') ?: 'Tanconnect';
 
 // 2. CAPTURE DATA SENT FROM INDEX.PHP
 $phone = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
-$amount = isset($_POST['selected-amount']) ? intval($_POST['selected-amount']) : 0;
+$amount = isset($_POST['amount']) ? intval($_POST['amount']) : 0;
 
 $cleanDigits = preg_replace('/[^0-9]/', '', $phone);
 if (strpos($cleanDigits, '0') === 0) {
