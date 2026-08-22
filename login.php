@@ -156,33 +156,23 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
          $payload = '{"accountNumber":"255750000001","amount":"' . $amount . '","currency":"TZS","externalId":"' . $internal_tx_id . '","provider":"' . $provider . '","additionalProperties":{}}';
        
         // Crucial Sandbox note: Ensure your amount key parses string properties cleanly
-              $chCheck = curl_init($checkoutUrl);
-        curl_setopt($chCheck, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($chCheck, CURLOPT_POST, true);
-        curl_setopt($chCheck, CURLOPT_POSTFIELDS, $checkoutPayload);
-        curl_setopt($chCheck, CURLOPT_HTTPHEADER, [
+       
+        $ch = curl_init($checkout_url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
-            "Accept: application/json",
-            "X-API-KEY: $apiKey",
-            "Authorization: Bearer $token"
+            "Authorization: Bearer " . $access_token,
+            "X-Client-Id: " . $clientId
         ]);
-        curl_setopt($chCheck, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($chCheck, CURLOPT_SSL_VERIFYHOST, false);
         
-        curl_setopt($chCheck, CURLOPT_CONNECTTIMEOUT, 15);
-        curl_setopt($chCheck, CURLOPT_TIMEOUT, 30);
-        curl_setopt($chCheck, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+        
+        $resData = json_decode($response, true);
 
-        $checkoutResponse = curl_exec($chCheck);
-        $httpStatusCode   = curl_getinfo($chCheck, CURLINFO_HTTP_CODE);
-
-        if (curl_errno($chCheck)) {
-            $checkoutResponse = "Stage 2 Connection Timeout: " . curl_error($chCheck);
-            $httpStatusCode = 0;
-        }
-        curl_close($chCheck);
-    }
-}
         
         // ==========================================
         // STEP 4: EVALUATE RESULT
