@@ -53,19 +53,21 @@ try {
         $updateStmt->execute(['tx_id' => $internal_tx_id, 'id' => $voucher_id]);
         $pdo->commit();
         
+              // ==========================================
+        // STEP 2b: GENERATE AZAMPAY OAUTH BEARER TOKEN (SANDBOX AUTO-CASING)
         // ==========================================
-        // STEP 2b: GENERATE AZAMPAY OAUTH BEARER TOKEN (SANDBOX)
-        // ==========================================
-        $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
-$authPayload = json_encode([
-    'appname'      => $appName,
-    'clientid'     => $clientId,
-    'clientsecret' => $secretKey
-]);
-
-       
-
-
+        $auth_url = "https://azampay.co.tz";
+        
+        // Supplying both camelCase and lowercase formats prevents schema definition rejection errors
+        $auth_payload = [
+            "appName" => $azampay_app_name,
+            "appname" => $azampay_app_name,
+            "clientId" => $azampay_client_id,
+            "clientid" => $azampay_client_id,
+            "clientSecret" => $azampay_secret_key,
+            "clientsecret" => $azampay_secret_key
+        ];
+        
         $ch_auth = curl_init($auth_url);
         curl_setopt($ch_auth, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch_auth, CURLOPT_POST, true);
@@ -76,19 +78,20 @@ $authPayload = json_encode([
         $auth_data = json_decode($auth_response, true);
         curl_close($ch_auth);
         
-        // Handle variations in AzamPay sandbox responses ('accessToken' vs 'token')
         $access_token = null;
-        if (isset($auth_data['data']['accessToken'])) {
-            $access_token = $auth_data['data']['accessToken'];
-        } elseif (isset($auth_data['token'])) {
-            $access_token = $auth_data['token'];
-        } elseif (isset($auth_data['accessToken'])) {
-            $access_token = $auth_data['accessToken'];
-        }
+        if (isset($auth_data['data']['accessToken'])) { $access_token = $auth_data['data']['accessToken']; }
+        elseif (isset($auth_data['token'])) { $access_token = $auth_data['token']; }
+        elseif (isset($auth_data['accessToken'])) { $access_token = $auth_data['accessToken']; }
         
         if (!$access_token) {
-            throw new Exception("AzamPay Authentication Failed.");
+            // Safety rollback: reset voucher if handshake fails
+            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL, customer_phone = NULL WHERE id = :id");
+            $revertStmt->execute(['id' => $voucher_id]);
+            
+            // Print the raw sandbox text to expose exactly why it is failing
+            throw new Exception("AzamPay Authentication Failed. Raw Sandbox Error: " . ($auth_response ?: 'No Server Response'));
         }
+
         
         // ==========================================
         // STEP 3: SEND PUSH TO AZAMPAY (SANDBOX)
