@@ -59,14 +59,14 @@ try {
         $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
 
         // Supplying both camelCase and lowercase formats prevents schema definition rejection errors
-        $auth_payload = [
+       $authPayload = json_encode([
             "appName" => $azampay_app_name,
             "appname" => $azampay_app_name,
             "clientId" => $azampay_client_id,
             "clientid" => $azampay_client_id,
             "clientSecret" => $azampay_secret_key,
             "clientsecret" => $azampay_secret_key
-        ];
+        ]);
         
         $ch_auth = curl_init($auth_url);
         curl_setopt($ch_auth, CURLOPT_RETURNTRANSFER, true);
