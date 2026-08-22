@@ -71,16 +71,16 @@ $authPayload = json_encode([
 ]);
 
 
-$chAuth = curl_init($authUrl);
-curl_setopt($chAuth, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($chAuth, CURLOPT_POST, true);
-curl_setopt($chAuth, CURLOPT_POSTFIELDS, $authPayload);
-curl_setopt($chAuth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
-curl_setopt($chAuth, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($chAuth, CURLOPT_SSL_VERIFYHOST, false);
-curl_setopt($chAuth, CURLOPT_CONNECTTIMEOUT, 15);
-curl_setopt($chAuth, CURLOPT_TIMEOUT, 30);
-curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+$ch_auth = curl_init($authUrl);
+curl_setopt($ch_auth, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch_auth, CURLOPT_POST, true);
+curl_setopt($ch_auth, CURLOPT_POSTFIELDS, $authPayload);
+curl_setopt($ch_auth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
+curl_setopt($ch_auth, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch_auth, CURLOPT_SSL_VERIFYHOST, false);
+curl_setopt($ch_auth, CURLOPT_CONNECTTIMEOUT, 15);
+curl_setopt($ch_auth, CURLOPT_TIMEOUT, 30);
+curl_setopt($ch_auth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
         
         $auth_response = curl_exec($ch_auth);
