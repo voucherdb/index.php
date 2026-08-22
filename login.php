@@ -12,12 +12,27 @@ $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
 
 // 2. CAPTURE DATA SENT FROM INDEX.PHP
-$phone = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
-$amount = isset($_POST['amount']) ? intval($_POST['amount']) : 0;
+$phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
+$amount = isset($_POST['amount']) ? trim($_POST['amount']) : '1000'; 
 
-$cleanDigits = preg_replace('/[^0-9]/', '', $phone);
-if (strpos($cleanDigits, '0') === 0) {
-    $cleanDigits = '255' . substr($cleanDigits, 1);
+$amount = str_replace(',', '', $amount);
+
+if (substr($phone, 0, 1) === '0') {
+    $phone = '255' . substr($phone, 1);
+}
+
+$routingPrefix = substr($phone, 3, 2); 
+
+if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
+    $provider = "Mpesa";
+} elseif (in_array($routingPrefix, ['70', '71', '77', '65', '07', '67', '72'])) {
+    $provider = "Tigo";
+} elseif (in_array($routingPrefix, ['78', '79', '68', '69'])) {
+    $provider = "Airtel";
+} elseif (in_array($routingPrefix, ['62', '61'])) {
+    $provider = "Halopesa";
+} else {
+    $provider = "Mpesa"; 
 }
 
 $error_message = null;
@@ -57,7 +72,7 @@ $clientId = '678beae1-7761-47fb-8111-858fb60d7ad3';
 $secretKey = 'VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=';
 $appName = 'Tanconnect';
 $apiKey  = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
-
+$transactionId = 'WIFI-' . time();
 
        
               // ==========================================
@@ -71,16 +86,16 @@ $authPayload = json_encode([
 ]);
 
 
-$ch_auth = curl_init($authUrl);
-curl_setopt($ch_auth, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch_auth, CURLOPT_POST, true);
-curl_setopt($ch_auth, CURLOPT_POSTFIELDS, $authPayload);
-curl_setopt($ch_auth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
-curl_setopt($ch_auth, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($ch_auth, CURLOPT_SSL_VERIFYHOST, false);
-curl_setopt($ch_auth, CURLOPT_CONNECTTIMEOUT, 15);
-curl_setopt($ch_auth, CURLOPT_TIMEOUT, 30);
-curl_setopt($ch_auth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+$chAuth = curl_init($authUrl);
+curl_setopt($chAuth, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($chAuth, CURLOPT_POST, true);
+curl_setopt($chAuth, CURLOPT_POSTFIELDS, $authPayload);
+curl_setopt($chAuth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
+curl_setopt($chAuth, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($chAuth, CURLOPT_SSL_VERIFYHOST, false);
+curl_setopt($chAuth, CURLOPT_CONNECTTIMEOUT, 15);
+curl_setopt($chAuth, CURLOPT_TIMEOUT, 30);
+curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
         
         $auth_response = curl_exec($ch_auth);
@@ -106,13 +121,7 @@ curl_setopt($ch_auth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         // STEP 3: SEND PUSH TO AZAMPAY (SANDBOX)
         // ==========================================
         $checkout_url = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
-        $provider = "AzamPay";
-        $prefix_3 = substr($cleanDigits, 3, 2);
-        if (in_array($prefix_3, ['74', '75', '76', '14'])) { $provider = "Mpesa"; }
-        elseif (in_array($prefix_3, ['71', '77', '65', '07', '67', '72', '70'])) { $provider = "Tigo"; }
-        elseif (in_array($prefix_3, ['78', '79', '68', '69'])) { $provider = "Airtel"; }
-        elseif (in_array($prefix_3, ['62', '61'])) { $provider = "Halopesa"; }
-        
+               
         // Crucial Sandbox note: Ensure your amount key parses string properties cleanly
         $payload = [
             "accountNumber" => $cleanDigits,
@@ -130,7 +139,7 @@ curl_setopt($ch_auth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
             "Authorization: Bearer " . $access_token,
-            "X-Client-Id: " . $clientId
+            "X-Client-Id: " . $azampay_client_id
         ]);
         
         $response = curl_exec($ch);
