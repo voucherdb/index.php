@@ -121,27 +121,40 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         // STEP 3: SEND PUSH TO AZAMPAY (SANDBOX)
         // ==========================================
         $checkout_url = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
-         $payload = '{"accountNumber":"255750000001","amount":"' . $amount . '","currency":"TZS","externalId":"' . $internal_tx_id . '","provider":"' . $provider . '","additionalProperties":{}}';
-       
-        // Crucial Sandbox note: Ensure your amount key parses string properties cleanly
-       
+
+        $payloadArray = [
+            "accountNumber"        => (string)$cleanDigits, // Dynamically injects the user's phone input
+            "amount"               => (string)$amount,
+            "currency"             => "TZS",
+            "externalId"           => (string)$internal_tx_id,
+            "provider"             => (string)$provider,
+            "additionalProperties" => new stdClass()         // Generates a valid empty JSON object: {}
+        ];
         
-        $ch = curl_init($checkout_url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        // 2. Safely encode the array into a perfect JSON string structure
+        $checkoutPayload = json_encode($payloadArray);
+        
+        $chCheck = curl_init($checkoutUrl);
+        curl_setopt($chCheck, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($chCheck, CURLOPT_POST, true);
+        curl_setopt($chCheck, CURLOPT_POSTFIELDS, $checkoutPayload);
+        curl_setopt($chCheck, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
-            "Authorization: Bearer " . $access_token,
-            "X-Client-Id: " . $clientId
+            "Accept: application/json",
+            "X-API-KEY: " . $apiKey,             // Securely pulls from your Railway variable configurations
+            "Authorization: Bearer " . $access_token
         ]);
         
-        $response = curl_exec($ch);
-        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        // Operational safety parameter configurations
+        curl_setopt($chCheck, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($chCheck, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($chCheck, CURLOPT_CONNECTTIMEOUT, 15);
+        curl_setopt($chCheck, CURLOPT_TIMEOUT, 30);
+        curl_setopt($chCheck, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         
-        $resData = json_decode($response, true);
-        
+        $checkoutResponse = curl_exec($chCheck);
+        $httpStatusCode = curl_getinfo($chCheck, CURLINFO_HTTP_CODE);
+
         // ==========================================
         // STEP 4: EVALUATE RESULT
         // ==========================================
