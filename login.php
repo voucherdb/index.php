@@ -134,7 +134,7 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         // 2. Safely encode the array into a perfect JSON string structure
         $checkoutPayload = json_encode($payloadArray);
         
-        $chCheck = curl_init($checkoutUrl);
+        $chCheck = curl_init($checkout_url);
         curl_setopt($chCheck, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($chCheck, CURLOPT_POST, true);
         curl_setopt($chCheck, CURLOPT_POSTFIELDS, $checkoutPayload);
