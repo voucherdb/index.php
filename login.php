@@ -121,16 +121,10 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         // STEP 3: SEND PUSH TO AZAMPAY (SANDBOX)
         // ==========================================
         $checkout_url = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
-               
+         $payload = '{"accountNumber":"255750000001","amount":"' . $amount . '","currency":"TZS","externalId":"' . $internal_tx_id . '","provider":"' . $provider . '","additionalProperties":{}}';
+       
         // Crucial Sandbox note: Ensure your amount key parses string properties cleanly
-        $payload = [
-            "accountNumber" => $cleanDigits,
-            "amount" => (string)$amount,
-            "currency" => "TZS",
-            "externalId" => $internal_tx_id,
-            "provider" => $provider,
-            "additionalProperties" => new stdClass()
-        ];
+       
         
         $ch = curl_init($checkout_url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
