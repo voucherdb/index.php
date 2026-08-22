@@ -132,9 +132,8 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($payload));
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
-            "Authorization: Bearer $access_token",
-            "X-API-KEY: $apiKey",
-
+            "Authorization: Bearer " . $access_token,
+            "X-Client-Id: " . $clientId
         ]);
         
         $response = curl_exec($ch);
@@ -146,23 +145,26 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         // ==========================================
         // STEP 4: EVALUATE RESULT
         // ==========================================
-        if ($http_code == 200 && isset($resData['success']) && ($resData['success'] == true || $resData['success'] === true || $resData['success'] === "true")) {
-            
+        if ($http_code == 200 && isset($resData['success']) && ($resData['success'] == true || $resData['success'] === "true")) {
             $finalStmt = $pdo->prepare("UPDATE vouchers SET status = 'used' WHERE id = :id");
             $finalStmt->execute(['id' => $voucher_id]);
-            
         } else {
-            // Failure safety reset: Clean the phone and transaction log so another user can buy it
-            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL, customer_phone = NULL WHERE id = :id");
+            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
-            
-            // Helpful Diagnostic text: If it still fails, it will show you the raw API response text string
-            $error_message = "Muamala umeshindikana au umekataliwa. (API Response: " . json_encode($resData) . " | HTTP: " . $http_code . ")";
+            $error_message = "Muamala umeshindwa kufanyika. Tafadhali jaribu tena.";
             $voucher_code = null;
         }
+    }
+} catch (Exception $e) {
+    if (isset($pdo) && $pdo->inTransaction()) { 
+        $pdo->rollBack(); 
+    }
+    // TEMPORARY DIAGNOSTIC MODE: Prints the exact line and error cause directly to the screen
+    $error_message = "HITILAFU YA KIUFUNDI (Line " . $e->getLine() . "): " . $e->getMessage() . " katika faili " . basename($e->getFile());
+    $voucher_code = null;
+}
 
 ?>
-
 <!DOCTYPE html>
 <html lang="sw">
 <head>
