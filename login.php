@@ -53,41 +53,11 @@ try {
     $stmt = $pdo->prepare("SELECT id, voucher_code FROM vouchers WHERE price_tier = :amount AND status = 'available' LIMIT 1 FOR UPDATE");
     $stmt->execute(['amount' => $amount]);
     $voucher = $stmt->fetch();
-    
+  
     if (!$voucher) {
+        $pdo->rollBack();
+        $error_message = "Samahani, vocha za kiasi cha TZS " . number_format($amount) . " zimeisha kwa sasa. Tafadhali chagua kifurushi kingine.";
 
-<!DOCTYPE html>
-<html lang="sw">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANConnect - Uhaba wa Vifurushi</title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 90vh; }
-        .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
-        .error-color { color: #e74c3c; font-size: 16px; font-weight: bold; margin-top: 15px; }
-        .btn-done { background: #3498db; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; text-transform: uppercase; transition: background 0.2s; }
-        .btn-done:hover { filter: brightness(0.9); }
-         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
-     
-    </style>
-</head>
-<body>
-
-<div class="receipt-card">
-    <!-- Top-corner Exit Close Button -->
-    <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
-
-    <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
-
-    <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
-    <div class="error-color">Uhaba wa Vifurushi Umejitokeza!</div>
-
-    <p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Mtambo umeshindwa kuchakata vifurushi vya TZS " . number_format($amount) . " Tafadhali jaribu vifurushi vingine."</p>
-    
-    <a href="index.php" class="btn-done" style="background: #e74c3c;">Jaribu</a>
-    <br><br><div class="footer">"We bring the world at your finger tips" </div></div>
-</body></html>
 
     } else {
         $voucher_id = $voucher['id'];
