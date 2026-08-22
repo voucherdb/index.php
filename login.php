@@ -146,12 +146,6 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         // ==========================================
         // STEP 4: EVALUATE RESULT
         // ==========================================
-                // ==========================================
-        // STEP 4: EVALUATE RESULT
-        // ==========================================
-         // ==========================================
-        // STEP 4: EVALUATE RESULT
-        // ==========================================
         if ($http_code == 200 && isset($resData['success']) && ($resData['success'] == true || $resData['success'] === true || $resData['success'] === "true")) {
             
             $finalStmt = $pdo->prepare("UPDATE vouchers SET status = 'used' WHERE id = :id");
@@ -166,15 +160,6 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
             $error_message = "Muamala umeshindikana au umekataliwa. (API Response: " . json_encode($resData) . " | HTTP: " . $http_code . ")";
             $voucher_code = null;
         }
-
-} catch (Exception $e) {
-    if (isset($pdo) && $pdo->inTransaction()) { 
-        $pdo->rollBack(); 
-    }
-    // TEMPORARY DIAGNOSTIC MODE: Prints the exact line and error cause directly to the screen
-    $error_message = "HITILAFU YA KIUFUNDI (Line " . $e->getLine() . "): " . $e->getMessage() . " katika faili " . basename($e->getFile());
-    $voucher_code = null;
-}
 
 ?>
 
