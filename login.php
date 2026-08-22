@@ -191,6 +191,7 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
 
         <!-- ERROR DISPLAY -->
         <h3 class="error-title">Hitilafu ya Mtandao Imejitokeza! ❌</h3>
+  <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
         <p style="color: #57606f; line-height: 1.5; margin-bottom: 25px;"><?php echo htmlspecialchars($error_message); ?></p>
         <button class="btn" onclick="window.history.back();">Rudi Nyuma</button>
 
@@ -218,6 +219,20 @@ function copyVoucher() {
         alert("Imeshindwa kunakili kiotomatiki. Tafadhali nakili kwa mkono.");
     });
 }
+function closeThisWindow() {
+    window.close();
+    var hiddenExitLink = document.createElement('a');
+    hiddenExitLink.href = "about:blank"; 
+    hiddenExitLink.target = "_self";
+    document.body.appendChild(hiddenExitLink);
+    hiddenExitLink.click();
+    if (!window.closed) {
+        window.open('', '_self', '');
+        window.close();
+    }
+}
+
+
 </script>
 
 </body>
