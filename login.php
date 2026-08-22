@@ -123,7 +123,7 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         $checkout_url = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
 
         $payloadArray = [
-            "accountNumber"        => (string)$cleanDigits, // Dynamically injects the user's phone input
+            "accountNumber"        => (string)$phone, // Dynamically injects the user's phone input
             "amount"               => (string)$amount,
             "currency"             => "TZS",
             "externalId"           => (string)$internal_tx_id,
