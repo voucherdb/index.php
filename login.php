@@ -159,19 +159,27 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         // STEP 4: EVALUATE RESULT
         // ==========================================
         // Since HTTP code is 200, the request reached the gateway successfully. 
-        if ($http_code == 200) {
+        // ==========================================
+        // STEP 4: EVALUATE RESULT (VARIABLES ALIGNED)
+        // ==========================================
+        if ($httpStatusCode == 200) {
             
             $finalStmt = $pdo->prepare("UPDATE vouchers SET status = 'used' WHERE id = :id");
             $finalStmt->execute(['id' => $voucher_id]);
             
         } else {
-            // Failure safety reset: Clean the phone and transaction log so another user can buy it
+            // Failure safety reset: Rollback data states cleanly
             $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL, customer_phone = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
             
-            $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $http_code . ")";
+            if ($httpStatusCode === 0) {
+                $error_message = "Mwasiliano na AzamPay yamefeli. Tafadhali jaribu tena.";
+            } else {
+                $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $httpStatusCode . ")";
+            }
             $voucher_code = null;
         }
+
 
 
     }
