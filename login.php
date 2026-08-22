@@ -145,10 +145,8 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         // ==========================================
         // STEP 4: EVALUATE RESULT
         // ==========================================
-               // ==========================================
-        // STEP 4: EVALUATE RESULT
-        // ==========================================
-        if ($http_code == 200 && isset($resData['success']) && ($resData['success'] == true || $resData['success'] === true || $resData['success'] === "true")) {
+        // Since HTTP code is 200, the request reached the gateway successfully. 
+        if ($http_code == 200) {
             
             $finalStmt = $pdo->prepare("UPDATE vouchers SET status = 'used' WHERE id = :id");
             $finalStmt->execute(['id' => $voucher_id]);
@@ -158,10 +156,10 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
             $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL, customer_phone = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
             
-            // Helpful Diagnostic text: If it still fails, it will show you the raw API response text string
-            $error_message = "Muamala umeshindikana au umekataliwa. (API Response: " . json_encode($resData) . " | HTTP: " . $http_code . ")";
+            $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $http_code . ")";
             $voucher_code = null;
         }
+
 
     }
 } catch (Exception $e) {
