@@ -139,7 +139,7 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
             "Authorization: Bearer " . $access_token,
-            "X-Client-Id: " . $azampay_client_id
+            "X-Client-Id: " . $clientId
         ]);
         
         $response = curl_exec($ch);
