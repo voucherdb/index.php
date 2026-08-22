@@ -145,15 +145,24 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         // ==========================================
         // STEP 4: EVALUATE RESULT
         // ==========================================
-        if ($http_code == 200 && isset($resData['success']) && ($resData['success'] == true || $resData['success'] === "true")) {
+               // ==========================================
+        // STEP 4: EVALUATE RESULT
+        // ==========================================
+        if ($http_code == 200 && isset($resData['success']) && ($resData['success'] == true || $resData['success'] === true || $resData['success'] === "true")) {
+            
             $finalStmt = $pdo->prepare("UPDATE vouchers SET status = 'used' WHERE id = :id");
             $finalStmt->execute(['id' => $voucher_id]);
+            
         } else {
-            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL WHERE id = :id");
+            // Failure safety reset: Clean the phone and transaction log so another user can buy it
+            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL, customer_phone = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
-            $error_message = "Muamala umeshindwa kufanyika. Tafadhali jaribu tena.";
+            
+            // Helpful Diagnostic text: If it still fails, it will show you the raw API response text string
+            $error_message = "Muamala umeshindikana au umekataliwa. (API Response: " . json_encode($resData) . " | HTTP: " . $http_code . ")";
             $voucher_code = null;
         }
+
     }
 } catch (Exception $e) {
     if (isset($pdo) && $pdo->inTransaction()) { 
