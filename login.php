@@ -56,8 +56,8 @@ try {
               // ==========================================
         // STEP 2b: GENERATE AZAMPAY OAUTH BEARER TOKEN (SANDBOX AUTO-CASING)
         // ==========================================
-        $auth_url = "https://azampay.co.tz";
-        
+        $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
+
         // Supplying both camelCase and lowercase formats prevents schema definition rejection errors
         $auth_payload = [
             "appName" => $azampay_app_name,
