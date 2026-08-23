@@ -44,50 +44,41 @@ try {
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]);
     
-    // ==========================================
+     // ==========================================
     // STEPS 1 & 2: DATABASE CHECK & RESERVATION
     // ==========================================
     $pdo->beginTransaction();
+    
     $stmt = $pdo->prepare("SELECT id, voucher_code FROM vouchers WHERE price_tier = :amount AND status = 'available' LIMIT 1 FOR UPDATE");
     $stmt->execute(['amount' => $amount]);
     $voucher = $stmt->fetch();
+    
     if (!$voucher) {
         $pdo->rollBack();
         $error_message = "Samahani, mtambo umeshindwa kuchakata vocha za TZS " . number_format($amount) . " kwa sasa. Tafadhali jaribu kifurushi kingine.";
     } else {
-        // 🚨 THE CRITICAL FIX: Define $voucher_id by pulling it out of the $voucher array first!
+        // 1. Safely extract voucher values from array
         $voucher_id = $voucher['id']; 
         $voucher_code = $voucher['voucher_code'];
-               $updateStmt = $pdo->prepare("UPDATE vouchers SET status = 'assigned', assigned_at = NOW(), transaction_id = :tx_id, customer_phone = :phone WHERE id = :id");
+        
+        // 2. Update status and log the customer phone number seamlessly
+        $updateStmt = $pdo->prepare("UPDATE vouchers SET status = 'assigned', assigned_at = NOW(), transaction_id = :tx_id, customer_phone = :phone WHERE id = :id");
         $updateStmt->execute([
             'tx_id' => $internal_tx_id,
             'phone' => $phone,
             'id'    => $voucher_id
         ]);
-        $pdo->commit();
-
-
-
-    if (!$voucher) {
-        $pdo->rollBack();
-        $error_message = "Samahani, mtambo umeshindwa kuchakata vocha za TZS " . number_format($amount) . " kwa sasa. Tafadhali jaribu kifurushi kingine.";
-    } else {
-        $voucher_id = $voucher['id'];
-        $voucher_code = $voucher['voucher_code'];
         
-        $updateStmt = $pdo->prepare("UPDATE vouchers SET status = 'assigned', assigned_at = NOW(), transaction_id = :tx_id WHERE id = :id");
-        $updateStmt->execute(['tx_id' => $internal_tx_id, 'id' => $voucher_id]);
         $pdo->commit();
 
-        // AzamPay Credentials
+        // ==========================================
+        // STEP 2b: AZAMPAY PRODUCTION SETUP
+        // ==========================================
         $clientId = '678beae1-7761-47fb-8111-858fb60d7ad3';
         $secretKey = 'VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=';
         $appName = 'Tanconnect';
         $apiKey  = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
-       
-        // ==========================================
-        // STEP 2b: GENERATE AZAMPAY OAUTH BEARER TOKEN
-        // ==========================================
+        
         $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
         $authPayload = json_encode([
             'appname'      => $appName,
