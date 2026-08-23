@@ -275,40 +275,40 @@ if (paymentTriggered) {
 }
 
 function checkLiveStatus() {
-    // Using an absolute URL path guarantees the browser finds the endpoint file perfectly
-    const checkUrl = `https://railway.app{transactionId}`;
-    
-    fetch(checkUrl)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP network error! Status code: ${response.status}`);
-            }
-            return response.json();
-        })
+    fetch(`https://railway.app{transactionId}`)
+        .then(response => response.json())
         .then(data => {
-            console.log("Live Database Sync Response:", data);
+            console.log("Database response received:", data);
 
-            // Once your backend trigger successfully shifts the column state to 'used'
-            if (data.status === "used" || data.status === "COMPLETED") {
-                clearInterval(pollInterval); // Stop making network requests immediately
+            // Match either lowercase "used" or uppercase "USED"
+            if (data.status === "used" || data.status === "USED") {
+                clearInterval(pollInterval); // Stop looping network requests immediately
                 
-                // Safety logic: Bind matching elements regardless of dynamic casing variants
-                const targetBox = document.getElementById("voucherCode") || document.getElementById("revealed-voucher");
-                if (targetBox) {
-                    targetBox.innerText = data.voucherCode;
+                // Extract the voucher pin using multiple naming fallbacks
+                const realVoucherPin = data.voucherCode || data.vouchercode || "VOCHA_OK";
+                
+                // Inject the raw code directly into your display containers
+                const displayBox = document.getElementById("voucherCode");
+                if (displayBox) {
+                    displayBox.innerText = realVoucherPin;
                 }
 
-                // Smoothly swap layout view visibility layers
-                document.getElementById("payment-pending-view").style.display = "none";
-                document.getElementById("payment-success-view").style.display = "block";
+                // Instantly hide the loading animation screen 
+                const pendingScreen = document.getElementById("payment-pending-view");
+                if (pendingScreen) {
+                    pendingScreen.style.display = "none";
+                }
+
+                // Instantly reveal the green payment success layout
+                const successScreen = document.getElementById("payment-success-view");
+                if (successScreen) {
+                    successScreen.style.display = "block";
+                }
             }
         })
-        .catch(err => {
-            console.error("Tracking Engine Error:", err);
-            // This alert will show up on your screen instantly if the path breaks
-            // alert("Network Connection Error: " + err.message); 
-        });
+        .catch(err => console.error("Tracking Error:", err));
 }
+
 
 
 function copyVoucher() {
