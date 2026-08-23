@@ -1,44 +1,48 @@
 <?php
-header('Content-Type: text/plain');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+header('Content-Type: application/json');
 
-echo "=== TANCONNECT DEVELOPER UTILITY: GLOBAL VOUCHER STATUS RESET ===\n\n";
-
-// 1. Establish database connection metrics automatically through cloud variables
+// 1. DATABASE CONFIGURATION (Pulls from your Railway Environment Variables)
 $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-$db_user = getenv('MYSQLUSER') ?: 'root'; 
-$db_pass = getenv('MYSQLPASSWORD') ?: '';
-$db_name = getenv('MYSQLDATABASE') ?: 'railway';
 $db_port = getenv('MYSQLPORT') ?: '3306';
+$db_user = getenv('MYSQLUSER') ?: 'root';
+$db_pass = getenv('MYSQLPASSWORD') ?: 'uGMtUbozFJJSnBszScvdokEShYJWoMDn';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-$conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
-if ($conn->connect_error) {
-    die("❌ DATABASE CONNECTION FAILED: " . $conn->connect_error);
-}
+try {
+    $pdo = new PDO("mysql:host=$db_host;port=$db_port;dbname=$db_name;charset=utf8", $db_user, $db_pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
 
-echo "✓ Connected to MySQL Database successfully.\n";
-
-// 2. Clear out transaction_id and reset status back to PENDING or AVAILABLE
-// Change the target table name if you ever migrate from wifi_vouchers
-echo "Initiating global wipe of testing data states...\n";
-
-// This resets SUCCESS back to PENDING so you can rerun your fake_callback.php loops infinitely
-$resetQuery = "UPDATE wifi_vouchers SET status = 'AVAILABLE', purchased_at = NULL WHERE status = 'ASSIGNED'";
-
-if ($conn->query($resetQuery) === TRUE) {
-    // Get the exact number of rows that were modified by this action
-    $affected_rows = $conn->affected_rows;
+    // 2. EXECUTE THE BULK RESET QUERY
+    // This updates every single voucher row back to a fresh, available testing state
+    $sql = "UPDATE vouchers 
+            SET status = 'available', 
+                assigned_at = NULL, 
+                transaction_id = NULL, 
+                customer_phone = NULL";
+                
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
     
-    echo "========================================================================\n";
-    echo "🚀 GLOBAL DATABASE RECOVERY REBOOT COMPLETE!\n";
-    echo "========================================================================\n";
-    echo "✓ Affected Rows Switched Back to Test Mode: " . $affected_rows . "\n";
-    echo "✓ Status columns flipped cleanly from 'SUCCESS' back to 'AVAILABLE'.\n";
-    echo "✓ All temporary test purchase timestamps have been wiped out.\n\n";
-    echo "Go look at your website storefront dashboard or fire up your fake_callback.php simulator tab—your entire environment has been refreshed back to step one seamlessly!";
-} else {
-    echo "❌ System execution error while parsing query string: " . $conn->error;
+    // Get the total number of rows that were reset
+    $rowCount = $stmt->rowCount();
+
+    echo json_encode([
+        'success' => true,
+        'message' => 'Database reset completely successful!',
+        'vouchers_restored' => $rowCount,
+        'timestamp' => date('Y-m-d H:i:s')
+    ]);
+
+} catch (Exception $e) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Database reset failed!',
+        'error' => $e->getMessage()
+    ]);
 }
-
-$conn->close();
 ?>
-
