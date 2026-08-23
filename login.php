@@ -47,15 +47,10 @@ try {
     // ==========================================
     // STEPS 1 & 2: DATABASE CHECK & RESERVATION
     // ==========================================
-       // ==========================================
-    // STEPS 1 & 2: DATABASE CHECK & RESERVATION
-    // ==========================================
     $pdo->beginTransaction();
-    
     $stmt = $pdo->prepare("SELECT id, voucher_code FROM vouchers WHERE price_tier = :amount AND status = 'available' LIMIT 1 FOR UPDATE");
     $stmt->execute(['amount' => $amount]);
     $voucher = $stmt->fetch();
-    
     if (!$voucher) {
         $pdo->rollBack();
         $error_message = "Samahani, mtambo umeshindwa kuchakata vocha za TZS " . number_format($amount) . " kwa sasa. Tafadhali jaribu kifurushi kingine.";
@@ -63,18 +58,14 @@ try {
         // 🚨 THE CRITICAL FIX: Define $voucher_id by pulling it out of the $voucher array first!
         $voucher_id = $voucher['id']; 
         $voucher_code = $voucher['voucher_code'];
-        
-        // Prepare the statement with your corrected lowercase database columns
-        $updateStmt = $pdo->prepare("UPDATE vouchers SET status = 'assigned', assigned_at = NOW(), transaction_id = :tx_id, customer_phone = :phone WHERE id = :id");
-        
-        // Execute the query safely passing the phone number variable down to the row cell
+               $updateStmt = $pdo->prepare("UPDATE vouchers SET status = 'assigned', assigned_at = NOW(), transaction_id = :tx_id, customer_phone = :phone WHERE id = :id");
         $updateStmt->execute([
-            'tx_id' => $internal_tx_id, 
-            'phone' => $phone, 
+            'tx_id' => $internal_tx_id,
+            'phone' => $phone,
             'id'    => $voucher_id
         ]);
-        
         $pdo->commit();
+
 
 
     if (!$voucher) {
