@@ -191,6 +191,8 @@ try {
 <body>
 
 <div class="result-card">
+                <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+
     <?php if ($error_message): ?>
         <!-- ERROR DISPLAY -->
         <h3 class="error-title">Hitilafu ya Mtandao Imejitokeza! ❌</h3>
