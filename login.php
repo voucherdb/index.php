@@ -153,7 +153,7 @@ try {
             $revertStmt->execute(['id' => $voucher_id]);
             
             if ($httpStatusCode === 0) {
-                $error_message = "Mwasiliano na AzamPay yamefeli. Tafadhali jaribu tena.";
+                $error_message = "Tumeshindwa kuwasiliana na mtandao wako. Tafadhali jaribu tena.";
             } else {
                 $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $httpStatusCode . ")";
             }
@@ -195,31 +195,32 @@ try {
 
     <?php if ($error_message): ?>
         <!-- ERROR DISPLAY -->
-        <h3 class="error-title">Hitilafu ya Mtandao Imejitokeza! ❌</h3>
+        <h3 class="error-title">❌ Hitilafu ya Mtandao Imejitokeza! </h3>
         <p style="color: #57606f; line-height: 1.5; margin-bottom: 25px;"><?php echo htmlspecialchars($error_message); ?></p>
         <button class="btn" onclick="window.history.back();">Rudi Nyuma</button>
 
     <?php elseif ($payment_triggered): ?>
         <!-- WAITING STATE (STK PUSH SMS FIRED) -->
         <div id="payment-pending-view">
-            <h3 style="color: #f39c12; margin-top: 0;">Inasubiri Malipo Kukamilika...</h3>
+            <h3 style="color: #f39c12; margin-top: 0;">Inasubiri Malipo...</h3>
             <div class="spinner"></div>
             <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
-                Tafadhali ingiza PIN kwenye simu yako, kukamilisha muamala. 
-            </p>
+                 <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: bold; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
+                Tafadhali ingiza PIN kwenye simu yako kuruhusu muamala kukamilika. Malipo yanafanyika kupitia mtandao wa AzamPay. Ukikamilisha malipo voucher yako itaonekana hapa. Vilevile utapokea sms yenye namba yako ya voucher kutoka nambari 0753 476 850 
+                </marquee>
         </div>
 
         <!-- SUCCESS DISPLAY (HIDDEN UNTIL POLL DETECTS COMPLETED STATUS) -->
         <div id="payment-success-view" style="display: none;">
-            <h3 class="success-title">Malipo Yamefanikiwa! ✔</h3>
-            <p style="color: #57606f; line-height: 1.5; font-size: 15px;">
-                Muamala wako umekamilika. Tafadhali <b>nakili (copy)</b> namba hii ya vocha hapa chini, kisha utabonyeza (HODI) ili kuunganishwa na mtandao wa TANConnect.
-            </p>
+            <h3 class="success-title">✔ Malipo Yamefanikiwa! </h3> 
+            <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: bold; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
+                   Muamala wako umekamilika, Tafadhali bonyeza NAKILI kuhifadhi voucher yako, kisha bonyeza (HODI) ili kuunganishwa na mtandao wa TANConnect Wi-Fi. 
+                </marquee>
             
             <div class="voucher-box" id="voucherCode">---------</div>
             
-            <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">Nakili Vocha (Copy)</button>
-            <button class="btn" style="background: #747d8c;" onclick="window.history.back();">Funga Ukurasa</button>
+            <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">NAKILI</button>
+            <button class="btn" style="background: #747d8c;" onclick="window.history.back();">FUNGA</button>
         </div>
     <?php endif; ?>
 </div>
@@ -254,7 +255,7 @@ function checkLiveStatus() {
 function copyVoucher() {
     var voucherText = document.getElementById("voucherCode").innerText;
     navigator.clipboard.writeText(voucherText).then(function() {
-        alert("Vocha ya TANConnect imenakiliwa! Sasa unapelekwa kwenye mtandao wetu...");
+        alert("Voucher yako imenakiliwa! Sasa unapelekwa kwenye mtandao wetu...");
         window.location.href = "https://www.5wifi.net";
     }, function() {
         // Redirection fallback if clipboard access is blocked
