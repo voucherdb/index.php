@@ -2,7 +2,7 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// 1. DATABASE CONFIGURATION (Pulls from your Railway Environment Variables)
+// 1. DATABASE CONFIGURATION (Pulls from your Railway Environment Variables) 
 $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port = getenv('MYSQLPORT') ?: '3306'; 
 $db_user = getenv('MYSQLUSER') ?: 'root';
@@ -325,7 +325,7 @@ function checkLiveStatus() {
 function copyVoucher() {
     var voucherText = document.getElementById("voucherCode").innerText;
     navigator.clipboard.writeText(voucherText).then(function() {
-        alert("Vocha ya TANConnect imenakiliwa! Sasa unapelekwa kwenye mtandao wetu...");
+        alert("Voucher yako imenakiliwa! Bonyeza HODI kwenye ukurasa unaofuata, kisha ingiza voucher kuingia mtandaoni.");
         window.location.href = "https://www.5wifi.net";
     }, function() {
         window.location.href = "https://www.5wifi.net";
