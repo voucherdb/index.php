@@ -264,61 +264,64 @@ function closeThisWindow() {
     }
 }
 
+// 1. Capture the exact dynamic ID token from your PHP file header engine
 const transactionId = "<?php echo $internal_tx_id; ?>";
 const paymentTriggered = <?php echo $payment_triggered ? 'true' : 'false'; ?>;
 let pollInterval;
 
 if (paymentTriggered) {
     window.onload = function() {
-        pollInterval = setInterval(checkLiveStatus, 3000); // Check status every 3 seconds
+        // Run our background verification script every 3 seconds
+        pollInterval = setInterval(checkLiveStatus, 3000); 
     };
 }
 
 function checkLiveStatus() {
-    // Queries via absolute web service endpoint routing paths
-    fetch(`https://railway.app{transactionId}`)
+    // 2. Fetch data via standard relative routing to avoid secure domain policy restrictions
+    fetch(`check_status.php?id=${transactionId}`)
         .then(response => {
             if (!response.ok) {
-                throw new Error(`HTTP network error! Status code: ${response.status}`);
+                throw new Error(`HTTP Error Status: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
-            console.log("Database Sync Engine Tracking Response Layer:", data);
+            console.log("Tracking matrix sync check values:", data);
 
-            // 1. Force the returned status string to clean lowercase to bypass strict mismatches
-            const cleanStatus = String(data.status).toLowerCase().trim();
-
-            if (cleanStatus === "used" || cleanStatus === "completed") {
-                clearInterval(pollInterval); // Halt engine requests instantly
+            // 3. Match the lowercase status keyword row update
+            if (data.status === "used") {
+                clearInterval(pollInterval); // Stop looping server connection checks immediately
                 
-                // 2. Extract the voucher code value checking multiple expected parameter name variations
-                const finalVoucherCode = data.voucherCode || data.vouchercode || data.voucher_code || "VOCHA_OK";
-                
-                // 3. Inject the clean text variable cleanly into the box container element
-                const voucherDisplayBox = document.getElementById("voucherCode");
-                if (voucherDisplayBox) {
-                    voucherDisplayBox.innerText = finalVoucherCode;
+                // 4. Inject the raw text code pin down into your card display container
+                var codeDisplayBox = document.getElementById("voucherCode");
+                if (codeDisplayBox) {
+                    codeDisplayBox.innerText = data.voucherCode || data.vouchercode || "VOCHA_OK";
                 }
 
-                // 4. Smoothly hide the orange loading animation screen element container 
-                const pendingViewElement = document.getElementById("payment-pending-view");
-                if (pendingViewElement) {
-                    pendingViewElement.style.display = "none";
+                // 5. Hide the orange loader card view layout smoothly
+                var pendingCardView = document.getElementById("payment-pending-view");
+                if (pendingCardView) {
+                    pendingCardView.style.display = "none";
+                } else {
+                    // Fallback: If your page elements have different names, hide the whole container
+                    document.body.innerHTML = `<div style='background:white; padding:40px; border-radius:12px; text-align:center; max-width:400px; margin:50px auto; box-shadow:0 4px 12px rgba(0,0,0,0.1); font-family:sans-serif;'>
+                        <h2 style='color:#2ecc71;'>✔ Malipo Yamekamilika!</h2>
+                        <p>Voucher Code yako ni:</p>
+                        <div style='font-size:26px; font-weight:bold; color:blue; padding:15px; background:#f0f4f8; border:2px dashed #3498db; margin:20px 0;'>${data.voucherCode || data.vouchercode}</div>
+                        <button style='background:#2ecc71; color:white; border:none; padding:12px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer;' onclick='window.location.href="https://5wifi.net"'>HODI</button>
+                    </div>`;
+                    return;
                 }
 
-                // 5. Instantly reveal the green payment success layout panel view structure
-                const successViewElement = document.getElementById("payment-success-view");
-                if (successViewElement) {
-                    successViewElement.style.display = "block";
+                // 6. Reveal the green success panel container layout view
+                var successCardView = document.getElementById("payment-success-view");
+                if (successCardView) {
+                    successCardView.style.display = "block";
                 }
             }
         })
-        .catch(err => {
-            console.error("Tracking Loop Network Interruption:", err);
-        });
+        .catch(err => console.error("Database connection error inside loop track engine:", err));
 }
-
 
 function copyVoucher() {
     var voucherText = document.getElementById("voucherCode").innerText;
