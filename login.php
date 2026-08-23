@@ -179,17 +179,10 @@ try {
     <title>TANConnect - Malipo</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f2f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .result-card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 450px; width: 100%; text-align: center; }
-        .voucher-box { font-size: 28px; font-weight: bold; background: #eef2f7; padding: 15px; border-radius: 6px; letter-spacing: 2px; color: #0033a0; margin: 20px 0; border: 2px dashed #3498db; font-family: monospace; }
         .btn { display: inline-block; background: #3498db; color: white; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 6px; text-decoration: none; cursor: pointer; transition: background 0.2s; border: none; width: 100%; box-sizing: border-box; }
         .btn:hover { background: #2980b9; }
         .error-title { color: #e74c3c; margin-top: 0; }
-        .success-title { color: #2ecc71; margin-top: 0; }
-        
-        /* Spinner CSS component */
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #f39c12; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 25px auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+ </style>
 </head>
 <body>
 
@@ -219,7 +212,6 @@ try {
         .voucher-box { font-size: 28px; font-weight: bold; background: #eef2f7; padding: 15px; border-radius: 6px; letter-spacing: 2px; color: #0033a0; margin: 20px 0; border: 2px dashed #3498db; font-family: monospace; }
         .btn { display: inline-block; background: #3498db; color: white; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 6px; text-decoration: none; cursor: pointer; transition: background 0.2s; border: none; width: 100%; box-sizing: border-box; }
         .btn:hover { background: #2980b9; }
-        .error-title { color: #e74c3c; margin-top: 0; }
         .success-title { color: #2ecc71; margin-top: 0; }
         
         /* Spinner CSS component */
@@ -245,9 +237,9 @@ try {
 
         <!-- SUCCESS DISPLAY (HIDDEN UNTIL POLL DETECTS COMPLETED STATUS) -->
         <div id="payment-success-view" style="display: none;">
-            <h3 class="success-title">✔ Malipo Yamefanikiwa! </h3> 
+            <h3 class="success-title">✔ Malipo Yamekamilika! </h3> 
             <p style="color: black; font-weight: 500px ; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
-            Muamala wako umekamilika, Tafadhali bonyeza NAKILI kuhifadhi voucher yako, kisha bonyeza HODIkuperuzi mtandaoni. 
+            Tafadhali bonyeza NAKILI kuhifadhi voucher yako, kisha bonyeza HODI kuperuzi mtandaoni. 
                 </p>
             
             <div class="voucher-box" id="voucherCode">---------</div>
