@@ -6,7 +6,7 @@ ini_set('display_errors', 1);
 $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port = getenv('MYSQLPORT') ?: '3306';
 $db_user = getenv('MYSQLUSER') ?: 'root';
-$db_pass = getenv('MYSQLPASSWORD') ?: 'uGMtUbozFJJSnBszScvdokEShYJWoMDn';
+$db_pass = getenv('MYSQLPASSWORD') ?: 'uGMtUbozFJJSnBszScvdokEShYJWoMDn'; 
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
 // 2. CAPTURE DATA SENT FROM INDEX.PHP
@@ -260,7 +260,7 @@ function closeThisWindow() {
 
     <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
 
-<h3 style="color: blue; margin-top: 0;">Inasubiri Malipo...</h3>
+<h3 style="color: blue; margin-top: 0;">Ombi La Malipo Umetumiwa</h3>
             <div class="spinner"></div>
             <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
                  <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: 500px ; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
