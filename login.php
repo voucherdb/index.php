@@ -205,7 +205,7 @@ try {
             <h3 style="color: #f39c12; margin-top: 0;">Inasubiri Malipo...</h3>
             <div class="spinner"></div>
             <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
-                 <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: bold; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
+                 <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: 500px ; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
                 Tafadhali ingiza PIN kwenye simu yako kuruhusu muamala kukamilika || Malipo yanafanyika kupitia mtandao wa AzamPay || Ukikamilisha malipo voucher yako itajitokeza hapa || Vilevile utapokea sms yenye voucher yako kutoka nambari 0753 476 850 
                 </marquee>
         </div>
