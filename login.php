@@ -202,11 +202,10 @@ try {
     <?php elseif ($payment_triggered): ?>
         <!-- WAITING STATE (STK PUSH SMS FIRED) -->
         <div id="payment-pending-view">
-            <h3 style="color: #f39c12; margin-top: 0;">Subiri Malipo...</h3>
+            <h3 style="color: #f39c12; margin-top: 0;">Inasubiri Malipo Kukamilika...</h3>
             <div class="spinner"></div>
             <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
-                Tafadhali angalia simu yako! AzamPay imekutumia ujumbe wa malipo wa Push USSD. 
-                <br><br><b>Ingiza PIN yako kwenye simu yako</b> ili kukamilisha ununuzi wa vocha.
+                Tafadhali ingiza PIN kwenye simu yako, kukamilisha muamala. 
             </p>
         </div>
 
