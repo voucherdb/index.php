@@ -5,7 +5,7 @@ echo "=== TANCONNECT DEVELOPER UTILITY: GLOBAL VOUCHER STATUS RESET ===\n\n";
 
 // 1. Establish database connection metrics automatically through cloud variables
 $db_host = getenv('MYSQLHOST') ?: '127.0.0.1';
-$db_user = getenv('MYSQLUSER') ?: 'root';
+$db_user = getenv('MYSQLUSER') ?: 'root'; 
 $db_pass = getenv('MYSQLPASSWORD') ?: '';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 $db_port = getenv('MYSQLPORT') ?: '3306';
@@ -22,7 +22,7 @@ echo "✓ Connected to MySQL Database successfully.\n";
 echo "Initiating global wipe of testing data states...\n";
 
 // This resets SUCCESS back to PENDING so you can rerun your fake_callback.php loops infinitely
-$resetQuery = "UPDATE wifi_vouchers SET status = 'AVAILABLE', purchased_at = NULL WHERE status = 'ASSIGND'";
+$resetQuery = "UPDATE wifi_vouchers SET status = 'AVAILABLE', purchased_at = NULL WHERE status = 'ASSIGNED'";
 
 if ($conn->query($resetQuery) === TRUE) {
     // Get the exact number of rows that were modified by this action
