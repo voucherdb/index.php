@@ -26,16 +26,18 @@ try {
     $stmt->execute(['tx_id' => $transaction_id]);
     $voucher = $stmt->fetch();
 
-    if ($voucher) {
-        // FORCE the outputs to match every possible spelling scenario the frontend might expect
+       if ($voucher) {
+        // Force the output properties to match every possible parameter layout the Javascript engine expects
         echo json_encode([
-            'status'       => strtolower(trim($voucher['status'])), // returns "used"
-            'voucherCode'  => $voucher['voucher_code'],            // matches JavaScript camelCase
-            'vouchercode'  => $voucher['voucher_code']             // matches lowercase fallback
+            'status'       => strtolower(trim($voucher['status'])), // Returns clean lowercase "used"
+            'voucherCode'  => $voucher['voucher_code'],            // CamelCase fallback choice
+            'vouchercode'  => $voucher['voucher_code'],            // Lowercase fallback choice
+            'voucher_code' => $voucher['voucher_code']             // Snake_case fallback choice
         ]);
     } else {
         echo json_encode(['status' => 'pending', 'voucherCode' => '']);
     }
+
 
 } catch (Exception $e) {
     echo json_encode(['status' => 'error', 'voucherCode' => '']);
