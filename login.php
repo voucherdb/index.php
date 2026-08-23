@@ -239,9 +239,8 @@ try {
         <p style="color: black; font-weight: 500; margin-bottom: 4px;">
             Tafadhali bonyeza NAKILI kuhifadhi voucher yako, kisha bonyeza HODI kuperuzi mtandaoni. 
         </p>
-        <div class="voucher-box" id="voucherCode">---------</div>
+        <div class="voucher-box" id="voucherCode">--------</div>
         <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">NAKILI</button>
-        <button class="btn" style="background: #747d8c;" onclick="window.history.back();">FUNGA</button>
     </div>
   
     <br><div class="footer">"We bring the world at your finger tips" </div>
