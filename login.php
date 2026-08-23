@@ -233,7 +233,7 @@ try {
 
         <!-- WAITING STATE (STK PUSH SMS FIRED) -->
         <div id="payment-pending-view">
-            <h3 style="color: #f39c12; margin-top: 0;">Inasubiri Malipo...</h3>
+            <h3 style="color: blue; margin-top: 0;">Inasubiri Malipo...</h3>
             <div class="spinner"></div>
             <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
                  <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: 500px ; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
