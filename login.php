@@ -262,10 +262,14 @@ function closeThisWindow() {
 
 <h3 style="color: blue; margin-top: 0;">Ombi La Malipo Umetumiwa</h3>
             <div class="spinner"></div>
-            <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
-                 <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: 500px ; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
-                Tafadhali ingiza PIN kwenye simu yako kukamilisha muamala || Malipo yanafanyika kupitia mtandao wa AzamPay || Voucher yako itajitokeza hapa utakapokamilisha malipo || Vilevile utapokea sms yenye Voucher code kutoka nambari 0753 476 850 
+           <div id="status-loading-container" style="flex: 7; background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 14px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: #3498db; font-weight: bold; font-size: 13px;">
+               <marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 14px><font color="white">
+                <div><b>Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka 0753 476 850.</b></div>
                 </marquee>
+                
+            </div></div>
+
         <!-- WAITING STATE (STK PUSH SMS FIRED) -->
    
         <!-- SUCCESS DISPLAY (HIDDEN UNTIL POLL DETECTS COMPLETED STATUS) -->
