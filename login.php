@@ -73,7 +73,7 @@ try {
         // ==========================================
         // STEP 2b: GENERATE AZAMPAY OAUTH BEARER TOKEN
         // ==========================================
-       $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
+        $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
         $authPayload = json_encode([
             'appname'      => $appName,
             'clientid'     => $clientId,
@@ -142,14 +142,14 @@ try {
         $checkoutResponse = curl_exec($chCheck);
         $httpStatusCode = curl_getinfo($chCheck, CURLINFO_HTTP_CODE);
         curl_close($chCheck);
+
         // ==========================================
         // STEP 4: EVALUATE RESULT
         // ==========================================
         if ($httpStatusCode == 200) {
-            // Push was accepted! Keep status as 'assigned' until PIN trigger arrives
             $payment_triggered = true;
         } else {
-            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL, customer_phone = NULL WHERE id = :id");
+            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
             
             if ($httpStatusCode === 0) {
@@ -168,10 +168,7 @@ try {
     $voucher_code = null;
 }
 ?>
-
- <?php if ($error_message): ?>
-
-
+<?php if ($error_message): ?>
 <!DOCTYPE html>
 <html lang="sw">
 <head>
@@ -181,116 +178,71 @@ try {
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 90vh; }
         .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
-        .error-color { color: #e74c3c; font-size: 16px; font-weight: bold; margin-top: 15px; }
         .btn-done { background: #3498db; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; text-transform: uppercase; transition: background 0.2s; }
         .btn-done:hover { filter: brightness(0.9); }
-         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
-     
+        .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
     </style>
 </head>
 <body>
-
 <div class="receipt-card">
-    <!-- Top-corner Exit Close Button -->
     <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
-
     <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
-
-    <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
-
-<h3 class="error-title">❌ Hitilafu ya Mtandao Imejitokeza! </h3>
-        <p style="color: #57606f; line-height: 1.5; margin-bottom: 25px;"><?php echo htmlspecialchars($error_message); ?></p>
-     
+    <h3 style="color: #e74c3c; margin-top: 15px;">❌ Hitilafu ya Mtandao Imejitokeza! </h3>
+    <p style="color: #57606f; line-height: 1.5; margin-bottom: 25px;"><?php echo htmlspecialchars($error_message); ?></p>
     <a href="index.php" class="btn-done" style="background: #e74c3c;">Jaribu</a>
-    <br><br><div class="footer">"We bring the world at your finger tips" </div></div>
-
-<script>
-function closeThisWindow() {
-    window.close();
-    var hiddenExitLink = document.createElement('a');
-    hiddenExitLink.href = "about:blank"; 
-    hiddenExitLink.target = "_self";
-    document.body.appendChild(hiddenExitLink);
-    hiddenExitLink.click();
-    if (!window.closed) {
-        window.open('', '_self', '');
-        window.close();
-    }
-}
-</script>
+    <br><br><div class="footer">"We bring the world at your finger tips" </div>
+</div>
 </body>
 </html>
-
-
- <?php elseif ($payment_triggered): ?>
-
-
+<?php elseif ($payment_triggered): ?>
 <!DOCTYPE html>
 <html lang="sw">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANConnect - Uhaba wa Vifurushi</title>
+    <title>TANConnect - Malipo</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 90vh; }
         .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
-        .error-color { color: #e74c3c; font-size: 16px; font-weight: bold; margin-top: 15px; }
-        .btn-done { background: #3498db; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; text-transform: uppercase; transition: background 0.2s; }
-        .btn-done:hover { filter: brightness(0.9); }
-         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
-      .result-card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 450px; width: 100%; text-align: center; }
         .voucher-box { font-size: 28px; font-weight: bold; background: #eef2f7; padding: 15px; border-radius: 6px; letter-spacing: 2px; color: #0033a0; margin: 20px 0; border: 2px dashed #3498db; font-family: monospace; }
         .btn { display: inline-block; background: #3498db; color: white; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 6px; text-decoration: none; cursor: pointer; transition: background 0.2s; border: none; width: 100%; box-sizing: border-box; }
         .btn:hover { background: #2980b9; }
         .success-title { color: #2ecc71; margin-top: 0; }
-        
-        /* Spinner CSS component */
+        .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #f39c12; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 25px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
- </style>
+    </style>
 </head>
 <body>
-
 <div class="receipt-card">
-    <!-- Top-corner Exit Close Button -->
     <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
-
     <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
-    <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
+    <div id="payment-pending-view">
+        <h3 style="color: blue; margin-top: 0;">Ombi La Malipo Umetumiwa</h3>
+        <div class="spinner"></div>
+        <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 14px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
+            <marquee hspace="-45" behavior="scroll" direction="left" style="font-size: 14px; font-weight: bold; color: #3498db;">
+                Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka 0753 476 850.
+            </marquee>
+        </div>
+    </div>
 
-<h3 style="color: blue; margin-top: 0;">Ombi La Malipo Umetumiwa</h3>
-            <div class="spinner"></div>
-           <div id="status-loading-container" style="flex: 7; background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 14px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
-                <div style="display: flex; align-items: center; justify-content: center; gap: 10px; color: #3498db; font-weight: bold; font-size: 13px;">
-               <marquee hspace="-45" vspace="" behavior="" height="20" text-align="bottom" style="font-size: 14px><font color="white">
-                <div><b>Malipo yanafanyika kupitia mtandao wa AzamPay. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Voucher yako itajitokeza hapa utapoweka PIN kwenye simu yako. &nbsp;&nbsp;&nbsp;||&nbsp;&nbsp;&nbsp; Vilevile utapokea SMS yenye Voucher yako kutoka 0753 476 850.</b></div>
-                </marquee>
-                
-            </div></div>
-
-        <!-- WAITING STATE (STK PUSH SMS FIRED) -->
-   
-        <!-- SUCCESS DISPLAY (HIDDEN UNTIL POLL DETECTS COMPLETED STATUS) -->
-        <div id="payment-success-view" style="display: none;">
-            <h3 class="success-title">✔ Malipo Yamekamilika! </h3> 
-            <p style="color: black; font-weight: 500px ; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
+    <div id="payment-success-view" style="display: none;">
+        <h3 class="success-title">✔ Malipo Yamekamilika!</h3> 
+        <p style="color: black; font-weight: 500; margin-bottom: 4px;">
             Tafadhali bonyeza NAKILI kuhifadhi voucher yako, kisha bonyeza HODI kuperuzi mtandaoni. 
-                </p>
-            
-            <div class="voucher-box" id="voucherCode">---------</div>
-            
-            <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">NAKILI</button>
-            <button class="btn" style="background: #747d8c;" onclick="window.history.back();">FUNGA</button>   </div>
+        </p>
+        <div class="voucher-box" id="voucherCode">---------</div>
+        <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">NAKILI</button>
+        <button class="btn" style="background: #747d8c;" onclick="window.history.back();">FUNGA</button>
+    </div>
   
-   
-    <div class="footer">"We bring the world at your finger tips" </div></div>  </div> 
-
+    <br><div class="footer">"We bring the world at your finger tips" </div>
+</div> 
 </body>
 </html>
-
- <?php endif; ?>
+<?php endif; ?>
 
 <script>
 function closeThisWindow() {
@@ -320,10 +272,8 @@ function checkLiveStatus() {
     fetch(`check_status.php?id=${transactionId}`)
         .then(response => response.json())
         .then(data => {
-            // Once the status changes to 'used' via your fake_trigger.php/webhook simulation
             if (data.status === "used") {
                 clearInterval(pollInterval);
-                
                 document.getElementById("voucherCode").innerText = data.voucherCode;
                 document.getElementById("payment-pending-view").style.display = "none";
                 document.getElementById("payment-success-view").style.display = "block";
@@ -335,12 +285,10 @@ function checkLiveStatus() {
 function copyVoucher() {
     var voucherText = document.getElementById("voucherCode").innerText;
     navigator.clipboard.writeText(voucherText).then(function() {
-        alert("Voucher yako imenakiliwa! Sasa unapelekwa kwenye mtandao wetu...");
+        alert("Vocha ya TANConnect imenakiliwa! Sasa unapelekwa kwenye mtandao wetu...");
         window.location.href = "https://www.5wifi.net";
     }, function() {
-        // Redirection fallback if clipboard access is blocked
         window.location.href = "https://www.5wifi.net";
     });
 }
 </script>
-
