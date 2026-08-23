@@ -222,19 +222,23 @@ function closeThisWindow() {
 </html>
 
 
+ <?php elseif ($payment_triggered): ?>
 
 
-
-    <?php elseif ($payment_triggered): ?>
 <!DOCTYPE html>
 <html lang="sw">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TANConnect - Malipo</title>
+    <title>TANConnect - Uhaba wa Vifurushi</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f2f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
-        .result-card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 450px; width: 100%; text-align: center; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; text-align: center; padding: 50px 20px; color: #2c3e50; margin: 0; display: flex; justify-content: center; align-items: center; min-height: 90vh; }
+        .receipt-card { background: white; max-width: 450px; width: 100%; margin: 0 auto; padding: 40px 30px 30px 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); box-sizing: border-box; position: relative; }
+        .error-color { color: #e74c3c; font-size: 16px; font-weight: bold; margin-top: 15px; }
+        .btn-done { background: #3498db; color: white; border: none; padding: 14px; font-size: 14px; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 2px; width: 100%; box-sizing: border-box; font-weight: bold; text-transform: uppercase; transition: background 0.2s; }
+        .btn-done:hover { filter: brightness(0.9); }
+         .footer { font-family: 'Segoe UI', Arial, sans-serif; text-align: center; font-size: 11px; font-weight: bold; color: #1e3c72;}
+      .result-card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 450px; width: 100%; text-align: center; }
         .voucher-box { font-size: 28px; font-weight: bold; background: #eef2f7; padding: 15px; border-radius: 6px; letter-spacing: 2px; color: #0033a0; margin: 20px 0; border: 2px dashed #3498db; font-family: monospace; }
         .btn { display: inline-block; background: #3498db; color: white; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 6px; text-decoration: none; cursor: pointer; transition: background 0.2s; border: none; width: 100%; box-sizing: border-box; }
         .btn:hover { background: #2980b9; }
@@ -243,24 +247,27 @@ function closeThisWindow() {
         /* Spinner CSS component */
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #f39c12; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 25px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+
+ </style>
 </head>
 <body>
 
-<div class="result-card">
-                <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
+<div class="receipt-card">
+    <!-- Top-corner Exit Close Button -->
+    <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
 
+    <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
-        <!-- WAITING STATE (STK PUSH SMS FIRED) -->
-        <div id="payment-pending-view">
-            <h3 style="color: blue; margin-top: 0;">Inasubiri Malipo...</h3>
+    <!-- FIX 1: Aligned the opening and closing tag matching properties character-for-character -->
+
+<h3 style="color: blue; margin-top: 0;">Inasubiri Malipo...</h3>
             <div class="spinner"></div>
             <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
                  <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: 500px ; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
                 Tafadhali ingiza PIN kwenye simu yako kukamilisha muamala || Malipo yanafanyika kupitia mtandao wa AzamPay || Voucher yako itajitokeza hapa utakapokamilisha malipo || Vilevile utapokea sms yenye Voucher code kutoka nambari 0753 476 850 
                 </marquee>
-        </div>
-
+        <!-- WAITING STATE (STK PUSH SMS FIRED) -->
+   
         <!-- SUCCESS DISPLAY (HIDDEN UNTIL POLL DETECTS COMPLETED STATUS) -->
         <div id="payment-success-view" style="display: none;">
             <h3 class="success-title">✔ Malipo Yamekamilika! </h3> 
@@ -271,13 +278,30 @@ function closeThisWindow() {
             <div class="voucher-box" id="voucherCode">---------</div>
             
             <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">NAKILI</button>
-            <button class="btn" style="background: #747d8c;" onclick="window.history.back();">FUNGA</button>
-        </div>
-    <?php endif; ?>
-</div></div>
-</body></html>
+            <button class="btn" style="background: #747d8c;" onclick="window.history.back();">FUNGA</button>   </div>
+  
+   
+    <div class="footer">"We bring the world at your finger tips" </div></div>  </div> 
+
+</body>
+</html>
+
+ <?php endif; ?>
 
 <script>
+function closeThisWindow() {
+    window.close();
+    var hiddenExitLink = document.createElement('a');
+    hiddenExitLink.href = "about:blank"; 
+    hiddenExitLink.target = "_self";
+    document.body.appendChild(hiddenExitLink);
+    hiddenExitLink.click();
+    if (!window.closed) {
+        window.open('', '_self', '');
+        window.close();
+    }
+}
+
 const transactionId = "<?php echo $internal_tx_id; ?>";
 const paymentTriggered = <?php echo $payment_triggered ? 'true' : 'false'; ?>;
 let pollInterval;
@@ -316,5 +340,3 @@ function copyVoucher() {
 }
 </script>
 
-</body>
-</html>
