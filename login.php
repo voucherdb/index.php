@@ -269,18 +269,41 @@ if (paymentTriggered) {
 }
 
 function checkLiveStatus() {
-    fetch(`check_status.php?id=${transactionId}`)
-        .then(response => response.json())
+    // Using an absolute URL path guarantees the browser finds the endpoint file perfectly
+    const checkUrl = `https://railway.app{transactionId}`;
+    
+    fetch(checkUrl)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP network error! Status code: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            if (data.status === "used") {
-                clearInterval(pollInterval);
-                document.getElementById("voucherCode").innerText = data.voucherCode;
+            console.log("Live Database Sync Response:", data);
+
+            // Once your backend trigger successfully shifts the column state to 'used'
+            if (data.status === "used" || data.status === "COMPLETED") {
+                clearInterval(pollInterval); // Stop making network requests immediately
+                
+                // Safety logic: Bind matching elements regardless of dynamic casing variants
+                const targetBox = document.getElementById("voucherCode") || document.getElementById("revealed-voucher");
+                if (targetBox) {
+                    targetBox.innerText = data.voucherCode;
+                }
+
+                // Smoothly swap layout view visibility layers
                 document.getElementById("payment-pending-view").style.display = "none";
                 document.getElementById("payment-success-view").style.display = "block";
             }
         })
-        .catch(err => console.error("Error communicating with status API:", err));
+        .catch(err => {
+            console.error("Tracking Engine Error:", err);
+            // This alert will show up on your screen instantly if the path breaks
+            // alert("Network Connection Error: " + err.message); 
+        });
 }
+
 
 function copyVoucher() {
     var voucherText = document.getElementById("voucherCode").innerText;
