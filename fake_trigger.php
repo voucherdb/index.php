@@ -8,7 +8,7 @@
 // 1. SETTINGS: Change this to match your Railway app domain or local setup
 
 $railway_webhook_url = "https://wi-fi-voucher-project-production.up.railway.app";  
-$test_transaction_id = "TAN-1787473756-8106"; // Must match the transaction ID your frontend is polling
+$test_transaction_id = "TAN-1787477039-9979"; // Must match the transaction ID your frontend is polling
 
 // 2. MOCK AZAMPAY PAYLOAD (The exact structure AzamPay sends when a PIN is entered)
 $mock_payload = [
