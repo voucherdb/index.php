@@ -206,7 +206,7 @@ try {
             <div class="spinner"></div>
             <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
                  <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: bold; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
-                Tafadhali ingiza PIN kwenye simu yako kuruhusu muamala kukamilika. Malipo yanafanyika kupitia mtandao wa AzamPay. Ukikamilisha malipo voucher yako itaonekana hapa. Vilevile utapokea sms yenye namba yako ya voucher kutoka nambari 0753 476 850 
+                Tafadhali ingiza PIN kwenye simu yako kuruhusu muamala kukamilika || Malipo yanafanyika kupitia mtandao wa AzamPay || Ukikamilisha malipo voucher yako itajitokeza hapa || Vilevile utapokea sms yenye voucher yako kutoka nambari 0753 476 850 
                 </marquee>
         </div>
 
