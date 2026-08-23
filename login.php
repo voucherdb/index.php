@@ -55,7 +55,7 @@ try {
     
     if (!$voucher) {
         $pdo->rollBack();
-        $error_message = "Samahani, vocha za TZS " . number_format($amount) . " zimeisha kwa sasa. Tafadhali jaribu kifurushi kingine.";
+        $error_message = "Samahani, mtambo umeshindwa kuchakata vocha za TZS " . number_format($amount) . " kwa sasa. Tafadhali jaribu kifurushi kingine.";
     } else {
         $voucher_id = $voucher['id'];
         $voucher_code = $voucher['voucher_code'];
