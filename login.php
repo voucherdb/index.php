@@ -9,8 +9,6 @@ $db_user = getenv('MYSQLUSER') ?: 'root';
 $db_pass = getenv('MYSQLPASSWORD') ?: 'uGMtUbozFJJSnBszScvdokEShYJWoMDn';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-
-
 // 2. CAPTURE DATA SENT FROM INDEX.PHP
 $phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
 $amount = isset($_POST['amount']) ? trim($_POST['amount']) : '1000'; 
@@ -38,6 +36,7 @@ if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
 $error_message = null;
 $voucher_code = null;
 $internal_tx_id = "TAN-" . time() . "-" . rand(1000, 9999);
+$payment_triggered = false;
 
 try {
     $pdo = new PDO("mysql:host=$db_host;dbname=$db_name;charset=utf8", $db_user, $db_pass, [
@@ -65,38 +64,32 @@ try {
         $updateStmt->execute(['tx_id' => $internal_tx_id, 'id' => $voucher_id]);
         $pdo->commit();
 
-
-
- // AzamPay Credentials (Set these up in your Railway Variables Dashboard tab)
-$clientId = '678beae1-7761-47fb-8111-858fb60d7ad3';
-$secretKey = 'VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=';
-$appName = 'Tanconnect';
-$apiKey  = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
-$transactionId = 'WIFI-' . time();
-
+        // AzamPay Credentials
+        $clientId = '678beae1-7761-47fb-8111-858fb60d7ad3';
+        $secretKey = 'VsZ0sQJpaxcWpkm5WtfmQNfjqwq0WqeQ/4qiFI044jmdSvq5ksVo3GWtT6yjQYVr4uqgn4X9hUdnrBaf3opZI/HdK2PzbxzBLlBf5xBhTY8WeyjPgnTWbEBkkIA+8Z3MBCItvm83FBLdv/hOBAwtRbnOSNfPSKxs3TgtTGo1xMBc/NqGWAsMRKgEH5m5v0mO9jxgRQzRezzSE4ibKDrRg1bswh7GWN6u7SfKvzyZN1ZnSJPC6iTcgDz4gzeoygb9nyOprJCfwe0fEJd9ohfVMhOG/FGyXsEcG2UKjoeH12p1+/LqjzCOUyR1aYWv4R8GdizIzghOTtZCmnOb35XuyRbQkwdEq6lbC5naP322gvE+pQ/MAhS1q5ZeS3FzIYmaZ1yrcT10mIUNasaCsa+1oMmF8E/zrRnNnVPymU9S5pzjzCK44uRQHqoSnn3E44agwMq9y1A6JnCVeRAYsoI64xzjThf9DFgafop8ToYcisKqIaxYclEgJMtYX/hrIaWKGBNV+WUX0kRFh/KTLYtpOvLUpui1KMIQNEYwQDBG8gcV+uieN1VxwA780QRj1zdZI8K9HWeqzPwxgmYyi2CGeYzuLdAzC4X84NanxCMOoHCO/IFwuYhPTMqSnjMEaRoPKcymxHk0KwHN9rnzC6UKaXleNuTOG/szi2qYAr2XImY=';
+        $appName = 'Tanconnect';
+        $apiKey  = "63bdee95-eba0-4eec-a5f0-0a8a12a715df";
        
-              // ==========================================
-        // STEP 2b: GENERATE AZAMPAY OAUTH BEARER TOKEN (SANDBOX AUTO-CASING)
+        // ==========================================
+        // STEP 2b: GENERATE AZAMPAY OAUTH BEARER TOKEN
         // ==========================================
        $authUrl = "https://authenticator-sandbox.azampay.co.tz/AppRegistration/GenerateToken";
-$authPayload = json_encode([
-    'appname'      => $appName,
-    'clientid'     => $clientId,
-    'clientsecret' => $secretKey
-]);
+        $authPayload = json_encode([
+            'appname'      => $appName,
+            'clientid'     => $clientId,
+            'clientsecret' => $secretKey
+        ]);
 
-
-$chAuth = curl_init($authUrl);
-curl_setopt($chAuth, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($chAuth, CURLOPT_POST, true);
-curl_setopt($chAuth, CURLOPT_POSTFIELDS, $authPayload);
-curl_setopt($chAuth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
-curl_setopt($chAuth, CURLOPT_SSL_VERIFYPEER, false);
-curl_setopt($chAuth, CURLOPT_SSL_VERIFYHOST, false);
-curl_setopt($chAuth, CURLOPT_CONNECTTIMEOUT, 15);
-curl_setopt($chAuth, CURLOPT_TIMEOUT, 30);
-curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
-
+        $chAuth = curl_init($authUrl);
+        curl_setopt($chAuth, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($chAuth, CURLOPT_POST, true);
+        curl_setopt($chAuth, CURLOPT_POSTFIELDS, $authPayload);
+        curl_setopt($chAuth, CURLOPT_HTTPHEADER, ["Content-Type: application/json", "Accept: application/json"]);
+        curl_setopt($chAuth, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($chAuth, CURLOPT_SSL_VERIFYHOST, false);
+        curl_setopt($chAuth, CURLOPT_CONNECTTIMEOUT, 15);
+        curl_setopt($chAuth, CURLOPT_TIMEOUT, 30);
+        curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         
         $auth_response = curl_exec($chAuth);
         $auth_data = json_decode($auth_response, true);
@@ -108,30 +101,25 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         elseif (isset($auth_data['accessToken'])) { $access_token = $auth_data['accessToken']; }
         
         if (!$access_token) {
-            // Safety rollback: reset voucher if handshake fails
-            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL, customer_phone = NULL WHERE id = :id");
+            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
-            
-            // Print the raw sandbox text to expose exactly why it is failing
             throw new Exception("AzamPay Authentication Failed. Raw Sandbox Error: " . ($auth_response ?: 'No Server Response'));
         }
 
-        
         // ==========================================
         // STEP 3: SEND PUSH TO AZAMPAY (SANDBOX)
         // ==========================================
-        $checkout_url = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
+        $checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
 
         $payloadArray = [
-            "accountNumber"        => (string)$phone, // Dynamically injects the user's phone input
+            "accountNumber"        => (string)$phone,
             "amount"               => (string)$amount,
             "currency"             => "TZS",
             "externalId"           => (string)$internal_tx_id,
             "provider"             => (string)$provider,
-            "additionalProperties" => new stdClass()         // Generates a valid empty JSON object: {}
+            "additionalProperties" => new stdClass()
         ];
         
-        // 2. Safely encode the array into a perfect JSON string structure
         $checkoutPayload = json_encode($payloadArray);
         
         $chCheck = curl_init($checkout_url);
@@ -141,11 +129,10 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         curl_setopt($chCheck, CURLOPT_HTTPHEADER, [
             "Content-Type: application/json",
             "Accept: application/json",
-            "X-API-KEY: " . $apiKey,             // Securely pulls from your Railway variable configurations
+            "X-API-KEY: " . $apiKey,
             "Authorization: Bearer " . $access_token
         ]);
         
-        // Operational safety parameter configurations
         curl_setopt($chCheck, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($chCheck, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($chCheck, CURLOPT_CONNECTTIMEOUT, 15);
@@ -154,21 +141,14 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         
         $checkoutResponse = curl_exec($chCheck);
         $httpStatusCode = curl_getinfo($chCheck, CURLINFO_HTTP_CODE);
-
+        curl_close($chCheck);
         // ==========================================
         // STEP 4: EVALUATE RESULT
         // ==========================================
-        // Since HTTP code is 200, the request reached the gateway successfully. 
-        // ==========================================
-        // STEP 4: EVALUATE RESULT (VARIABLES ALIGNED)
-        // ==========================================
         if ($httpStatusCode == 200) {
-            
-            $finalStmt = $pdo->prepare("UPDATE vouchers SET status = 'used' WHERE id = :id");
-            $finalStmt->execute(['id' => $voucher_id]);
-            
+            // Push was accepted! Keep status as 'assigned' until PIN trigger arrives
+            $payment_triggered = true;
         } else {
-            // Failure safety reset: Rollback data states cleanly
             $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL, customer_phone = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
             
@@ -179,19 +159,14 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
             }
             $voucher_code = null;
         }
-
-
-
     }
 } catch (Exception $e) {
     if (isset($pdo) && $pdo->inTransaction()) { 
         $pdo->rollBack(); 
     }
-    // TEMPORARY DIAGNOSTIC MODE: Prints the exact line and error cause directly to the screen
     $error_message = "HITILAFU YA KIUFUNDI (Line " . $e->getLine() . "): " . $e->getMessage() . " katika faili " . basename($e->getFile());
     $voucher_code = null;
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="sw">
@@ -207,6 +182,10 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         .btn:hover { background: #2980b9; }
         .error-title { color: #e74c3c; margin-top: 0; }
         .success-title { color: #2ecc71; margin-top: 0; }
+        
+        /* Spinner CSS component */
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #f39c12; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 25px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -218,27 +197,67 @@ curl_setopt($chAuth, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
         <p style="color: #57606f; line-height: 1.5; margin-bottom: 25px;"><?php echo htmlspecialchars($error_message); ?></p>
         <button class="btn" onclick="window.history.back();">Rudi Nyuma</button>
 
-    <?php else: ?>
-        <!-- SUCCESS DISPLAY -->
-        <h3 class="success-title">Malipo Yamefanikiwa! ✔</h3>
-        <p style="color: #57606f; line-height: 1.5; font-size: 15px;">
-            Muamala wako umekamilika. Tafadhali <b>nakili (copy)</b> namba hii ya vocha hapa chini, kisha utabonyeza (HODI) ili kuunganishwa na mtandao wa TANConnect.
-        </p>
-        
-        <div class="voucher-box" id="voucherCode"><?php echo htmlspecialchars($voucher_code); ?></div>
-        
-        <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">Nakili Vocha (Copy)</button>
-        <button class="btn" style="background: #747d8c;" onclick="window.history.back();">Funga Ukurasa</button>
+    <?php elseif ($payment_triggered): ?>
+        <!-- WAITING STATE (STK PUSH SMS FIRED) -->
+        <div id="payment-pending-view">
+            <h3 style="color: #f39c12; margin-top: 0;">Subiri Malipo...</h3>
+            <div class="spinner"></div>
+            <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
+                Tafadhali angalia simu yako! AzamPay imekutumia ujumbe wa malipo wa Push USSD. 
+                <br><br><b>Ingiza PIN yako kwenye simu yako</b> ili kukamilisha ununuzi wa vocha.
+            </p>
+        </div>
+
+        <!-- SUCCESS DISPLAY (HIDDEN UNTIL POLL DETECTS COMPLETED STATUS) -->
+        <div id="payment-success-view" style="display: none;">
+            <h3 class="success-title">Malipo Yamefanikiwa! ✔</h3>
+            <p style="color: #57606f; line-height: 1.5; font-size: 15px;">
+                Muamala wako umekamilika. Tafadhali <b>nakili (copy)</b> namba hii ya vocha hapa chini, kisha utabonyeza (HODI) ili kuunganishwa na mtandao wa TANConnect.
+            </p>
+            
+            <div class="voucher-box" id="voucherCode">---------</div>
+            
+            <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">Nakili Vocha (Copy)</button>
+            <button class="btn" style="background: #747d8c;" onclick="window.history.back();">Funga Ukurasa</button>
+        </div>
     <?php endif; ?>
 </div>
 
 <script>
+const transactionId = "<?php echo $internal_tx_id; ?>";
+const paymentTriggered = <?php echo $payment_triggered ? 'true' : 'false'; ?>;
+let pollInterval;
+
+if (paymentTriggered) {
+    window.onload = function() {
+        pollInterval = setInterval(checkLiveStatus, 3000); // Check status every 3 seconds
+    };
+}
+
+function checkLiveStatus() {
+    fetch(`check_status.php?id=${transactionId}`)
+        .then(response => response.json())
+        .then(data => {
+            // Once the status changes to 'used' via your fake_trigger.php/webhook simulation
+            if (data.status === "used") {
+                clearInterval(pollInterval);
+                
+                document.getElementById("voucherCode").innerText = data.voucherCode;
+                document.getElementById("payment-pending-view").style.display = "none";
+                document.getElementById("payment-success-view").style.display = "block";
+            }
+        })
+        .catch(err => console.error("Error communicating with status API:", err));
+}
+
 function copyVoucher() {
     var voucherText = document.getElementById("voucherCode").innerText;
     navigator.clipboard.writeText(voucherText).then(function() {
-        alert("Vocha imenakiliwa kikamilifu!");
+        alert("Vocha ya TANConnect imenakiliwa! Sasa unapelekwa kwenye mtandao wetu...");
+        window.location.href = "https://www.5wifi.net";
     }, function() {
-        alert("Imeshindwa kunakili kiotomatiki. Tafadhali nakili kwa mkono.");
+        // Redirection fallback if clipboard access is blocked
+        window.location.href = "https://www.5wifi.net";
     });
 }
 </script>
