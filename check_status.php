@@ -18,32 +18,33 @@ if (empty($transaction_id)) {
     exit;
 }
 
+<?php
+header('Content-Type: application/json');
+
+// ... [Keep your database connection variables above here the same] ...
+
 try {
-    // 3. ESTABLISH SECURE DATABASE CONNECTION
     $pdo = new PDO("mysql:host=$db_host;port=$db_port;dbname=$db_name;charset=utf8", $db_user, $db_pass, [
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
     ]);
 
-    // 4. QUERY THE VOUCHERS TABLE
-    // We check if the voucher transaction_id matches, and see if the status changed to 'used'
     $stmt = $pdo->prepare("SELECT status, voucher_code FROM vouchers WHERE transaction_id = :tx_id LIMIT 1");
-    $stmt->execute(['tx_id' => $transaction_id]);
+    $stmt->execute(['tx_id' => $_GET['id']]);
     $voucher = $stmt->fetch();
 
     if ($voucher) {
-        // 5. SEND THE RESPONSE BACK TO JAVASCRIPT
-        // If status is 'used', JavaScript reveals the success screen and voucherCode text block
+        // FORCE the response to say "used" if the database table shows "used"
         echo json_encode([
-            'status' => $voucher['status'], // Will return 'assigned' or 'used'
+            'status' => $voucher['status'], // This will return "used"
             'voucherCode' => $voucher['voucher_code']
         ]);
     } else {
-        echo json_encode(['status' => 'pending', 'message' => 'Transaction tracking record not found yet']);
+        echo json_encode(['status' => 'pending', 'voucherCode' => '']);
     }
-
 } catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
+    echo json_encode(['status' => 'error', 'voucherCode' => '']);
 }
 ?>
+
 
