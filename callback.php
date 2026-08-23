@@ -1,40 +1,51 @@
 <?php
-// ==========================================================
-// AZAMPAY TRANSACTION COMPLETION CALLBACK HANDLER
-// ==========================================================
-
-// Set header to receive and return clean JSON objects
+// Set headers to receive and communicate using clean JSON data strings
 header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 0); // Keep errors out of raw production API delivery
 
-// Capture the raw background data payload sent from AzamPay's server
-$rawIncomingData = file_get_contents('php://input');
-$paymentData = json_decode($rawIncomingData, true);
+// 1. DATABASE CONFIGURATION (Pulls from your Railway Dashboard)
+$db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
+$db_port = getenv('MYSQLPORT') ?: '3306';
+$db_user = getenv('MYSQLUSER') ?: 'root';
+$db_pass = getenv('MYSQLPASSWORD') ?: 'uGMtUbozFJJSnBszScvdokEShYJWoMDn';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-// Fallback: If the incoming data packet is completely empty, kill the script safely
-if (!$paymentData) {
-    http_response_code(400);
-    echo json_encode(["status" => "fail", "message" => "Empty payload received"]);
-    exit();
+try {
+    // Establish secure PDO database connection matrix
+    $pdo = new PDO("mysql:host=$db_host;port=$db_port;dbname=$db_name;charset=utf8", $db_user, $db_pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
+    // 2. READ THE INCOMING PUSH DATA FROM THE TRIGGER SCRIPT
+    $input_json = file_get_contents('php://input');
+    $data = json_decode($input_json, true);
+
+    // Capture transactionId and status from the received payload
+    $transaction_id = isset($data['transactionId']) ? trim($data['transactionId']) : '';
+    $status         = isset($data['status']) ? trim($data['status']) : '';
+
+    // Validate that we received a real transaction ID and a COMPLETED status
+    if (empty($transaction_id) || $status !== 'COMPLETED') {
+        echo json_encode(['success' => false, 'message' => 'Invalid or missing data values']);
+        exit;
+    }
+
+    // 3. SECURELY UPDATE THE RECORD TO 'used' SO THE SPINNER CLEARS
+    $stmt = $pdo->prepare("UPDATE vouchers SET status = 'used' WHERE transaction_id = :tx_id");
+    $stmt->execute(['tx_id' => $transaction_id]);
+
+    // Send a clean text response back to the trigger script (No HTML)
+    echo json_encode([
+        'success' => true, 
+        'message' => 'Voucher status updated to used successfully'
+    ]);
+
+} catch (Exception $e) {
+    // Return any database errors as clean JSON strings
+    echo json_encode([
+        'success' => false, 
+        'message' => 'Database error: ' . $e->getMessage()
+    ]);
 }
-
-// Extract transaction variables sent from AzamPay as shown in your documentation image
-$transactionStatus = isset($paymentData['transactionstatus']) ? $paymentData['transactionstatus'] : ''; // "success" or "fail"
-$externalId        = isset($paymentData['externalId']) ? $paymentData['externalId'] : '';               // Your "WIFI-XXXXX" reference ID
-$operatorReference = isset($paymentData['operator']) ? $paymentData['operator'] : '';                 // e.g. "Tigo", "Mpesa"
-
-// Log the incoming payment raw results into a temporary file on Railway to verify transmission fields
-file_put_contents('payment_logs.txt', "ID: " . $externalId . " | Status: " . $transactionStatus . " | Time: " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
-
-// Check if AzamPay confirms the user successfully processed the wallet transaction
-if (strtolower($transactionStatus) === 'success') {
-    
-    // ------------------------------------------------------
-    // TODO: PLACE YOUR SUPABASE VOUCHER ISSUING CODE HERE
-    // ------------------------------------------------------
-    // Example: Mark transactionId as PAID in database and send voucher SMS via Beem / Twilio!
-    
-}
-
-// Always send a clean HTTP 200 OK success response back to AzamPay so they know you received it safely
-http_response_code(200);
-echo json_encode(["status" => "acknowledged", "reference" => $externalId]);
+?>
