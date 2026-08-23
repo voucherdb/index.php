@@ -109,7 +109,7 @@ try {
         // ==========================================
         // STEP 3: SEND PUSH TO AZAMPAY (SANDBOX)
         // ==========================================
-        $checkoutUrl = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
+        $checkout_url = "https://sandbox.azampay.co.tz/azampay/mno/checkout";
 
         $payloadArray = [
             "accountNumber"        => (string)$phone,
