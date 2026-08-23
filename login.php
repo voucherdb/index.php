@@ -52,7 +52,16 @@ try {
     $stmt = $pdo->prepare("SELECT id, voucher_code FROM vouchers WHERE price_tier = :amount AND status = 'available' LIMIT 1 FOR UPDATE");
     $stmt->execute(['amount' => $amount]);
     $voucher = $stmt->fetch();
-    
+            // 1. Prepare the query string with the lower-case column assignment
+        $updateStmt = $pdo->prepare("UPDATE vouchers SET status = 'assigned', assigned_at = NOW(), transaction_id = :tx_id, customer_phone = :phone WHERE id = :id");
+        
+        // 2. FIXED: You must command it to serve by passing the variables here!
+        $updateStmt->execute([
+            'tx_id' => $internal_tx_id, 
+            'phone' => $phone,          // <-- This gives the query the actual number to save!
+            'id'    => $voucher_id
+        ]);
+
     if (!$voucher) {
         $pdo->rollBack();
         $error_message = "Samahani, mtambo umeshindwa kuchakata vocha za TZS " . number_format($amount) . " kwa sasa. Tafadhali jaribu kifurushi kingine.";
