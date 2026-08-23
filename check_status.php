@@ -1,53 +1,49 @@
 <?php
-header("Content-Type: application/json");
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+header('Content-Type: application/json');
 
-// 1. Establish data stream targets natively using your dynamic cloud variables
-$db_host = getenv('MYSQLHOST') ?: '127.0.0.1';
-$db_user = getenv('MYSQLUSER') ?: 'root';
-$db_pass = getenv('MYSQLPASSWORD') ?: '';
-$db_name = getenv('MYSQLDATABASE') ?: 'railway';
+// 1. DATABASE CONFIGURATION (Matches your exact Login.php credentials)
+$db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_port = getenv('MYSQLPORT') ?: '3306';
+$db_user = getenv('MYSQLUSER') ?: 'root';
+$db_pass = getenv('MYSQLPASSWORD') ?: 'uGMtUbozFJJSnBszScvdokEShYJWoMDn';
+$db_name = getenv('MYSQLDATABASE') ?: 'railway';
 
-// 2. Safely capture the active transaction ID variable coming from your JavaScript frontend loop
-$txnId = isset($_GET['txn_id']) ? trim($_GET['txn_id']) : (isset($_GET['tx_id']) ? trim($_GET['tx_id']) : '');
+// 2. CAPTURE THE INTERNAL TRANSACTION ID FROM THE JAVASCRIPT FETCH REQUEST
+$transaction_id = isset($_GET['id']) ? trim($_GET['id']) : '';
 
-if (empty($txnId)) {
-    echo json_encode(["status" => "Pending", "message" => "Missing transaction id parameter"]);
-    exit();
+if (empty($transaction_id)) {
+    echo json_encode(['status' => 'error', 'message' => 'Missing transaction ID']);
+    exit;
 }
 
 try {
-    // 3. Connect to your actual MySQL instance
-    $conn = new mysqli($db_host, $db_user, $db_pass, $db_name, $db_port);
-    if ($conn->connect_error) {
-        echo json_encode(["status" => "Pending", "message" => "Connection failed"]);
-        exit();
-    }
+    // 3. ESTABLISH SECURE DATABASE CONNECTION
+    $pdo = new PDO("mysql:host=$db_host;port=$db_port;dbname=$db_name;charset=utf8", $db_user, $db_pass, [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
+    ]);
 
-    // 4. Securely look up your custom table "wifi_vouchers" using your exact "transaction_id" column name
-    $safeTxnId = $conn->real_escape_string($txnId);
-    $query = "SELECT status, voucher_code FROM wifi_vouchers WHERE transaction_id = '$safeTxnId' LIMIT 1";
-    $result = $conn->query($query);
+    // 4. QUERY THE VOUCHERS TABLE
+    // We check if the voucher transaction_id matches, and see if the status changed to 'used'
+    $stmt = $pdo->prepare("SELECT status, voucher_code FROM vouchers WHERE transaction_id = :tx_id LIMIT 1");
+    $stmt->execute(['tx_id' => $transaction_id]);
+    $voucher = $stmt->fetch();
 
-    if ($result && $result->num_rows > 0) {
-        $row = $result->fetch_assoc();
-        
-        // 5. If the webhook or fake callback has updated the status to SUCCESS or USED, reveal everything!
-        if ($row['status'] === 'SUCCESS' || $row['status'] === 'USED') {
-            echo json_encode([
-                "status" => "SUCCESS",
-                "voucher" => $row['voucher_code'] // Feeds the code perfectly to your JavaScript data.voucher reader!
-            ]);
-        } else {
-            echo json_encode(["status" => "Pending"]);
-        }
+    if ($voucher) {
+        // 5. SEND THE RESPONSE BACK TO JAVASCRIPT
+        // If status is 'used', JavaScript reveals the success screen and voucherCode text block
+        echo json_encode([
+            'status' => $voucher['status'], // Will return 'assigned' or 'used'
+            'voucherCode' => $voucher['voucher_code']
+        ]);
     } else {
-        echo json_encode(["status" => "Pending", "message" => "Record not matched yet"]);
+        echo json_encode(['status' => 'pending', 'message' => 'Transaction tracking record not found yet']);
     }
-
-    $conn->close();
 
 } catch (Exception $e) {
-    echo json_encode(["status" => "Pending"]);
+    echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 ?>
+
