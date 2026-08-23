@@ -4,7 +4,7 @@ ini_set('display_errors', 1);
 
 // 1. DATABASE CONFIGURATION (Pulls from your Railway Environment Variables)
 $db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-$db_port = getenv('MYSQLPORT') ?: '3306';
+$db_port = getenv('MYSQLPORT') ?: '3306'; 
 $db_user = getenv('MYSQLUSER') ?: 'root';
 $db_pass = getenv('MYSQLPASSWORD') ?: 'uGMtUbozFJJSnBszScvdokEShYJWoMDn'; 
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
@@ -275,40 +275,49 @@ if (paymentTriggered) {
 }
 
 function checkLiveStatus() {
+    // Queries via absolute web service endpoint routing paths
     fetch(`https://railway.app{transactionId}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP network error! Status code: ${response.status}`);
+            }
+            return response.json();
+        })
         .then(data => {
-            console.log("Database response received:", data);
+            console.log("Database Sync Engine Tracking Response Layer:", data);
 
-            // Match either lowercase "used" or uppercase "USED"
-            if (data.status === "used" || data.status === "USED") {
-                clearInterval(pollInterval); // Stop looping network requests immediately
+            // 1. Force the returned status string to clean lowercase to bypass strict mismatches
+            const cleanStatus = String(data.status).toLowerCase().trim();
+
+            if (cleanStatus === "used" || cleanStatus === "completed") {
+                clearInterval(pollInterval); // Halt engine requests instantly
                 
-                // Extract the voucher pin using multiple naming fallbacks
-                const realVoucherPin = data.voucherCode || data.vouchercode || "VOCHA_OK";
+                // 2. Extract the voucher code value checking multiple expected parameter name variations
+                const finalVoucherCode = data.voucherCode || data.vouchercode || data.voucher_code || "VOCHA_OK";
                 
-                // Inject the raw code directly into your display containers
-                const displayBox = document.getElementById("voucherCode");
-                if (displayBox) {
-                    displayBox.innerText = realVoucherPin;
+                // 3. Inject the clean text variable cleanly into the box container element
+                const voucherDisplayBox = document.getElementById("voucherCode");
+                if (voucherDisplayBox) {
+                    voucherDisplayBox.innerText = finalVoucherCode;
                 }
 
-                // Instantly hide the loading animation screen 
-                const pendingScreen = document.getElementById("payment-pending-view");
-                if (pendingScreen) {
-                    pendingScreen.style.display = "none";
+                // 4. Smoothly hide the orange loading animation screen element container 
+                const pendingViewElement = document.getElementById("payment-pending-view");
+                if (pendingViewElement) {
+                    pendingViewElement.style.display = "none";
                 }
 
-                // Instantly reveal the green payment success layout
-                const successScreen = document.getElementById("payment-success-view");
-                if (successScreen) {
-                    successScreen.style.display = "block";
+                // 5. Instantly reveal the green payment success layout panel view structure
+                const successViewElement = document.getElementById("payment-success-view");
+                if (successViewElement) {
+                    successViewElement.style.display = "block";
                 }
             }
         })
-        .catch(err => console.error("Tracking Error:", err));
+        .catch(err => {
+            console.error("Tracking Loop Network Interruption:", err);
+        });
 }
-
 
 
 function copyVoucher() {
