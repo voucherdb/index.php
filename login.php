@@ -229,6 +229,8 @@ try {
 </head>
 <body>
 
+<div class="result-card">
+                <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
 
         <!-- WAITING STATE (STK PUSH SMS FIRED) -->
@@ -254,7 +256,7 @@ try {
             <button class="btn" style="background: #747d8c;" onclick="window.history.back();">FUNGA</button>
         </div>
     <?php endif; ?>
-</div>
+</div></div>
 </body></html>
 
 <script>
