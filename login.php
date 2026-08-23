@@ -168,6 +168,9 @@ try {
     $voucher_code = null;
 }
 ?>
+
+ <?php if ($error_message): ?>
+
 <!DOCTYPE html>
 <html lang="sw">
 <head>
@@ -193,29 +196,57 @@ try {
 <div class="result-card">
                 <img src="logo.png" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
-    <?php if ($error_message): ?>
+    
         <!-- ERROR DISPLAY -->
         <h3 class="error-title">❌ Hitilafu ya Mtandao Imejitokeza! </h3>
         <p style="color: #57606f; line-height: 1.5; margin-bottom: 25px;"><?php echo htmlspecialchars($error_message); ?></p>
         <button class="btn" onclick="window.history.back();">Rudi Nyuma</button>
+</div>
+</body>
+</html>
+
 
     <?php elseif ($payment_triggered): ?>
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TANConnect - Malipo</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f1f2f6; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .result-card { background: #ffffff; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); max-width: 450px; width: 100%; text-align: center; }
+        .voucher-box { font-size: 28px; font-weight: bold; background: #eef2f7; padding: 15px; border-radius: 6px; letter-spacing: 2px; color: #0033a0; margin: 20px 0; border: 2px dashed #3498db; font-family: monospace; }
+        .btn { display: inline-block; background: #3498db; color: white; padding: 12px 30px; font-size: 16px; font-weight: bold; border-radius: 6px; text-decoration: none; cursor: pointer; transition: background 0.2s; border: none; width: 100%; box-sizing: border-box; }
+        .btn:hover { background: #2980b9; }
+        .error-title { color: #e74c3c; margin-top: 0; }
+        .success-title { color: #2ecc71; margin-top: 0; }
+        
+        /* Spinner CSS component */
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #f39c12; border-radius: 50%; width: 45px; height: 45px; animation: spin 1s linear infinite; margin: 25px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+
+
         <!-- WAITING STATE (STK PUSH SMS FIRED) -->
         <div id="payment-pending-view">
             <h3 style="color: #f39c12; margin-top: 0;">Inasubiri Malipo...</h3>
             <div class="spinner"></div>
             <p style="color: #57606f; line-height: 1.6; font-size: 15px;">
                  <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: 500px ; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
-                Tafadhali ingiza PIN kwenye simu yako kuruhusu muamala kukamilika || Malipo yanafanyika kupitia mtandao wa AzamPay || Ukikamilisha malipo voucher yako itajitokeza hapa || Vilevile utapokea sms yenye voucher yako kutoka nambari 0753 476 850 
+                Tafadhali ingiza PIN kwenye simu yako kukamilisha muamala || Malipo yanafanyika kupitia mtandao wa AzamPay || Voucher yako itajitokeza hapa utakapokamilisha malipo || Vilevile utapokea sms yenye Voucher code kutoka nambari 0753 476 850 
                 </marquee>
         </div>
 
         <!-- SUCCESS DISPLAY (HIDDEN UNTIL POLL DETECTS COMPLETED STATUS) -->
         <div id="payment-success-view" style="display: none;">
             <h3 class="success-title">✔ Malipo Yamefanikiwa! </h3> 
-            <marquee behavior="scroll" direction="left" scrollamount="4" style="color: black; font-weight: bold; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
-                   Muamala wako umekamilika, Tafadhali bonyeza NAKILI kuhifadhi voucher yako, kisha bonyeza (HODI) ili kuunganishwa na mtandao wa TANConnect Wi-Fi. 
-                </marquee>
+            <p style="color: black; font-weight: 500px ; margin-bottom: 4px;font-family: 'Segoe UI', Arial, sans-serif;">
+            Muamala wako umekamilika, Tafadhali bonyeza NAKILI kuhifadhi voucher yako, kisha bonyeza HODIkuperuzi mtandaoni. 
+                </p>
             
             <div class="voucher-box" id="voucherCode">---------</div>
             
@@ -224,6 +255,7 @@ try {
         </div>
     <?php endif; ?>
 </div>
+</body></html>
 
 <script>
 const transactionId = "<?php echo $internal_tx_id; ?>";
