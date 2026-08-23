@@ -15,8 +15,8 @@ $mock_payload = [
     "transactionId" => $test_transaction_id,
     "status"        => "COMPLETED",
     "message"       => "Payment successful via Mobile Push STK",
-    "operator"      => "M-Pesa", // Can be TigoPesa, AirtelMoney, etc.
-    "amount"        => "1000",
+    "operator"      => "Tigo", // Can be TigoPesa, AirtelMoney, etc.
+    "amount"        => "500",
     "timestamp"     => date('Y-m-d H:i:s')
 ];
 
