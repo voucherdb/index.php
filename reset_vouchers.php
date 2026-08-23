@@ -4,7 +4,7 @@ header('Content-Type: text/plain');
 echo "=== TANCONNECT DEVELOPER UTILITY: GLOBAL VOUCHER STATUS RESET ===\n\n";
 
 // 1. Establish database connection metrics automatically through cloud variables
-$db_host = getenv('MYSQLHOST') ?: '127.0.0.1';
+$db_host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $db_user = getenv('MYSQLUSER') ?: 'root'; 
 $db_pass = getenv('MYSQLPASSWORD') ?: '';
 $db_name = getenv('MYSQLDATABASE') ?: 'railway';
