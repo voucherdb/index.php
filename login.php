@@ -176,11 +176,24 @@ try {
             $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
             
-            if ($httpStatusCode === 0) {
-                $error_message = "Tumeshindwa kuwasiliana na" . <strong><?php echo ($provider === 'Mpesa') ? 'M-Pesa' : (($provider === 'Tigo') ? 'Tigopesa' : (($provider === 'Airtel') ? 'Airtel Money' : (($provider === 'Halopesa') ? 'Halopesa' : 'simu yako'))); ?></strong> . "kuanzisha malipo, tafadhali jaribu tena."</p>;
+                    if ($httpStatusCode === 0) {
+            // Determine the clean provider name string directly within PHP variables
+            if ($provider === 'Mpesa') {
+                $provider_name = 'M-Pesa';
+            } elseif ($provider === 'Tigo') {
+                $provider_name = 'Tigopesa';
+            } elseif ($provider === 'Airtel') {
+                $provider_name = 'Airtel Money';
+            } elseif ($provider === 'Halopesa') {
+                $provider_name = 'Halopesa';
             } else {
-                $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $httpStatusCode . ")";
+                $provider_name = 'simu yako';
             }
+
+            // Build the clean string with standard HTML tag concatenation operators
+            $error_message = "Tumeshindwa kuwasiliana na <strong>" . $provider_name . "</strong> kuanzisha malipo, tafadhali jaribu tena.";
+        } else {
+
             $voucher_code = null;
         }
     }
