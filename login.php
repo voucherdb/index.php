@@ -177,7 +177,7 @@ try {
             $revertStmt->execute(['id' => $voucher_id]);
             
             if ($httpStatusCode === 0) {
-                $error_message = "Tumeshindwa kuwasiliana na " . (string)$provider . ". Tafadhali jaribu tena.";
+                $error_message = "<p style="font-size: 14px; color: black; line-height: 1.5; margin-top: 15px;">Tumeshindwa kuwasiliana na <strong><?php echo ($provider === 'Mpesa') ? 'M-Pesa' : (($provider === 'Tigo') ? 'Tigopesa' : (($provider === 'Airtel') ? 'Airtel Money' : (($provider === 'Halopesa') ? 'Halopesa' : 'simu yako'))); ?></strong> kuanzisha malipo, tafadhali jaribu tena.</p>";
             } else {
                 $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $httpStatusCode . ")";
             }
