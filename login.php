@@ -196,7 +196,7 @@ try {
 
             $voucher_code = null;
         }
-    }
+    
 } catch (Exception $e) {
     if (isset($pdo) && $pdo->inTransaction()) { 
         $pdo->rollBack(); 
