@@ -237,7 +237,7 @@ try {
     <div id="payment-success-view" style="display: none;">
         <h3 class="success-title">✔ Malipo Yamekamilika!</h3> 
         <p style="color: black; font-weight: 500; margin-bottom: 4px;">
-            Bonyeza NAKILI kukupeleka kwenye Mtandao wa TANConnect Wi-Fi.
+           Umefanikiwa kununua kifurushi cha Tsh " . number_format($amount) . " Bonyeza NAKILI, kisha fuata maelekezo kuunganishwa na Mtandao wa TANConnect Wi-Fi.
         </p>
         <div class="voucher-box" id="voucherCode">--------</div>
         <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">NAKILI</button> 
