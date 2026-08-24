@@ -60,6 +60,24 @@ try {
         // 1. Safely extract voucher values from array
         $voucher_id = $voucher['id']; 
         $voucher_code = $voucher['voucher_code'];
+                $voucher_id = $voucher['id']; 
+        $voucher_code = $voucher['voucher_code'];
+        
+        // Dynamic variable assignments for your success message
+        $purchased_price = number_format($amount); // Formats 1000 to 1,000
+        $purchased_duration = "Saa 1 (Hour 1)";    // Default fallback
+        
+        // Dynamically assign duration based on the package price tier
+        if ($amount == 500) {
+            $purchased_duration = "Masaa 6";
+        } elseif ($amount == 1000) {
+            $purchased_duration = "Siku 1";
+        } elseif ($amount == 2000) {
+            $purchased_duration = "Siku 2";
+        } elseif ($amount == 4000) {
+            $purchased_duration = "Siku 5";
+        }
+
         
         // 2. Update status and log the customer phone number seamlessly
         $updateStmt = $pdo->prepare("UPDATE vouchers SET status = 'assigned', assigned_at = NOW(), transaction_id = :tx_id, customer_phone = :phone WHERE id = :id");
