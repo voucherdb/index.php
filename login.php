@@ -240,7 +240,7 @@ try {
             Bonyeza NAKILI kukupeleka kwenye Mtandao wa TANConnect Wi-Fi.
         </p>
         <div class="voucher-box" id="voucherCode">--------</div>
-        <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">NAKILI</button>
+        <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">NAKILI</button> 
     </div>
   
     <br><div class="footer">"We bring the world at your finger tips" </div>
