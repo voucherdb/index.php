@@ -256,7 +256,7 @@ try {
         
         <!-- UPDATED TEXT LAYER WITH DYNAMIC PHP VALUES -->
         <p style="color: black; font-weight: 500; margin-bottom: 20px; font-size: 11px; line-height: 1.6; text-align: justify; padding: 0 5px;">
-          Umefanikiwa kununua kifurushi cha Tsh <b><?php echo $purchased_price; ?></b>, kitatumika kwa <b><?php echo $purchased_duration; ?></b>. Bonyeza NAKILI kuhifadhi voucher yako kisha fuata maelekezo kuunganishwa.
+          Umefanikiwa kununua kifurushi cha Tsh <b><?php echo $purchased_price; ?></b>, kitatumika kwa <b><?php echo $purchased_duration; ?></b>. Bonyeza NAKILI kuhifadhi voucher yako kisha fuata maelekezo.
         </p>
         
         <!-- FLEXBOX ROW CONTAINER -->
