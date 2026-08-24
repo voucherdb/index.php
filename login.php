@@ -176,7 +176,7 @@ try {
             $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
             
-                    if ($httpStatusCode === 0) {
+                  if ($httpStatusCode === 0) {
             // Determine the clean provider name string directly within PHP variables
             if ($provider === 'Mpesa') {
                 $provider_name = 'M-Pesa';
@@ -193,10 +193,11 @@ try {
             // Build the clean string with standard HTML tag concatenation operators
             $error_message = "Tumeshindwa kuwasiliana na <strong>" . $provider_name . "</strong> kuanzisha malipo, tafadhali jaribu tena.";
         } else {
-
+            // RESTORED: This line was missing, which caused the code brackets to break!
+            $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $httpStatusCode . ")";
             $voucher_code = null;
         }
-    
+    }
 } catch (Exception $e) {
     if (isset($pdo) && $pdo->inTransaction()) { 
         $pdo->rollBack(); 
@@ -204,6 +205,7 @@ try {
     $error_message = "HITILAFU YA KIUFUNDI (Line " . $e->getLine() . "): " . $e->getMessage() . " katika faili " . basename($e->getFile());
     $voucher_code = null;
 }
+
 ?>
 <?php if ($error_message): ?>
 <!DOCTYPE html>
