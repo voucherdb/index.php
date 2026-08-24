@@ -236,7 +236,7 @@ try {
 <div id="payment-success-view" style="display: none;">
     <h3 class="success-title" style="color: #2ecc71; margin-top: 0;">✔ Malipo Yamekamilika!</h3> 
     <p style="color: black; font-weight: 500; margin-bottom: 20px; font-size: 11px; line-height: 1.5;">
-      Asante kwa kuchagua TANConnect Wi-Fi. Bonyeza NAKILI kuhifadhi voucher yako kisha fuata maelekezo kuunganishwa.
+      Umefanikiwa kununua kifurushi cha Tsh(price_tier), kitatumika kwa (duration). Bonyeza NAKILI kuhifadhi voucher yako kisha fuata maelekezo kuunganishwa.
     </p>
     
     <!-- FLEXBOX ROW CONTAINER -->
