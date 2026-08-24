@@ -233,17 +233,30 @@ try {
             </marquee>
         </div>
     </div>
-
-    <div id="payment-success-view" style="display: none;">
-        <h3 class="success-title">✔ Malipo Yamekamilika!</h3> 
-        <p style="color: black; font-weight: 500; margin-bottom: 4px; font-size: 11px;">
-          Asante kwa kuchagua TANConnect Wi-Fi. Bonyeza NAKILI kuhifadhi voucher yako kisha fuata maelekezo kuunganishwa.
-        </p>
-        <div class="voucher-box" id="voucherCode">--------</div>
-        <button class="btn" style="margin-bottom: 10px; background: #2ecc71;" onclick="copyVoucher()">NAKILI</button> 
+<div id="payment-success-view" style="display: none;">
+    <h3 class="success-title" style="color: #2ecc71; margin-top: 0;">✔ Malipo Yamekamilika!</h3> 
+    <p style="color: black; font-weight: 500; margin-bottom: 20px; font-size: 11px; line-height: 1.5;">
+      Asante kwa kuchagua TANConnect Wi-Fi. Bonyeza NAKILI kuhifadhi voucher yako kisha fuata maelekezo kuunganishwa.
+    </p>
+    
+    <!-- FLEXBOX ROW CONTAINER -->
+    <div style="display: flex; align-items: center; gap: 12px; margin: 20px 0; width: 100%; box-sizing: border-box;">
+        
+        <!-- VOUCHER BOX (Left Side) -->
+        <div class="voucher-box" id="voucherCode" style="flex: 2; margin: 0; padding: 12px; font-size: 24px; display: flex; align-items: center; justify-content: center; height: 55px; box-sizing: border-box;">
+            --------
+        </div>
+        
+        <!-- NAKILI BUTTON (Right Side) -->
+        <button class="btn" style="flex: 1; margin: 0; background: #2ecc71; height: 55px; font-size: 15px; text-transform: uppercase; white-space: nowrap; padding: 0 15px; display: flex; align-items: center; justify-content: center;" onclick="copyVoucher()">
+            NAKILI
+        </button>
+        
     </div>
-  
-    <br><div class="footer">"We bring the world at your finger tips" </div>
+</div>
+
+<br><div class="footer">"We bring the world at your finger tips" </div>
+
 </div> 
 </body>
 </html>
