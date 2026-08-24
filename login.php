@@ -171,33 +171,35 @@ try {
         // STEP 4: EVALUATE RESULT
         // ==========================================
         if ($httpStatusCode == 200) {
+            // Push was accepted! Keep status as 'assigned' until PIN trigger arrives
             $payment_triggered = true;
         } else {
-            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL WHERE id = :id");
+            // Revert voucher if handshake fails
+            $revertStmt = $pdo->prepare("UPDATE vouchers SET status = 'available', assigned_at = NULL, transaction_id = NULL, customer_phone = NULL WHERE id = :id");
             $revertStmt->execute(['id' => $voucher_id]);
             
-                  if ($httpStatusCode === 0) {
-            // Determine the clean provider name string directly within PHP variables
-            if ($provider === 'Mpesa') {
-                $provider_name = 'M-Pesa';
-            } elseif ($provider === 'Tigo') {
-                $provider_name = 'Tigopesa';
-            } elseif ($provider === 'Airtel') {
-                $provider_name = 'Airtel Money';
-            } elseif ($provider === 'Halopesa') {
-                $provider_name = 'Halopesa';
-            } else {
-                $provider_name = 'simu yako';
-            }
+            if ($httpStatusCode === 0) {
+                // Determine the clean provider name string directly within PHP variables
+                if ($provider === 'Mpesa') {
+                    $provider_name = 'M-Pesa';
+                } elseif ($provider === 'Tigo') {
+                    $provider_name = 'Tigopesa';
+                } elseif ($provider === 'Airtel') {
+                    $provider_name = 'Airtel Money';
+                } elseif ($provider === 'Halopesa') {
+                    $provider_name = 'Halopesa';
+                } else {
+                    $provider_name = 'simu yako';
+                }
 
-            // Build the clean string with standard HTML tag concatenation operators
-            $error_message = "Tumeshindwa kuwasiliana na <strong>" . $provider_name . "</strong> kuanzisha malipo, tafadhali jaribu tena.";
-        } else {
-            // RESTORED: This line was missing, which caused the code brackets to break!
-            $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $httpStatusCode . ")";
+                // Build the clean string with standard HTML tag concatenation operators
+                $error_message = "Tumeshindwa kuwasiliana na <strong>" . $provider_name . "</strong> kuanzisha malipo, tafadhali jaribu tena.";
+            } else {
+                $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $httpStatusCode . ")";
+            }
             $voucher_code = null;
         }
-    }
+    } // Closes the outer 'else' block from the voucher check
 } catch (Exception $e) {
     if (isset($pdo) && $pdo->inTransaction()) { 
         $pdo->rollBack(); 
@@ -205,8 +207,8 @@ try {
     $error_message = "HITILAFU YA KIUFUNDI (Line " . $e->getLine() . "): " . $e->getMessage() . " katika faili " . basename($e->getFile());
     $voucher_code = null;
 }
-
 ?>
+
 <?php if ($error_message): ?>
 <!DOCTYPE html>
 <html lang="sw">
