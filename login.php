@@ -159,7 +159,7 @@ try {
             $revertStmt->execute(['id' => $voucher_id]);
             
             if ($httpStatusCode === 0) {
-                $error_message = "Tumeshindwa kuwasiliana na mtandao wako. Tafadhali jaribu tena.";
+                $error_message = "Tumeshindwa kuwasiliana na " . (string)$provider . ". Tafadhali jaribu tena.";
             } else {
                 $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $httpStatusCode . ")";
             }
@@ -236,7 +236,7 @@ try {
 
     <div id="payment-success-view" style="display: none;">
         <h3 class="success-title">✔ Malipo Yamekamilika!</h3> 
-        <p style="color: black; font-weight: 500; margin-bottom: 4px; font-size: 10px;">
+        <p style="color: black; font-weight: 500; margin-bottom: 4px; font-size: 11px;">
           Asante kwa kuchagua TANConnect Wi-Fi. Bonyeza NAKILI kuhifadhi voucher yako kisha fuata maelekezo kuunganishwa.
         </p>
         <div class="voucher-box" id="voucherCode">--------</div>
