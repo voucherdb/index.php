@@ -197,7 +197,7 @@ try {
                 }
 
                 // Build the clean string with standard HTML tag concatenation operators
-                $error_message = "Tumeshindwa kuwasiliana na"<b> . $provider_name . </b>"kuanzisha malipo. Tafadhali jaribu tena.";
+                $error_message = "Tumeshindwa kuwasiliana na " . $provider_name . " kuanzisha malipo. Tafadhali jaribu tena.";
             } else {
                 $error_message = "Muamala umeshindikana au umekataliwa na mfumo. (HTTP Status Code: " . $httpStatusCode . ")";
             }
