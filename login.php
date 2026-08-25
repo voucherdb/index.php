@@ -232,7 +232,7 @@ try {
 <div class="receipt-card">
     <span class="close-btn" onclick="closeThisWindow()" style="position: absolute; top: 12px; right: 18px; font-size: 26px; cursor: pointer; color: #7f8c8d; font-weight: bold; z-index: 110;">&times;</span>
     <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
-    <h3 style="color: #e74c3c; margin-top: 15px;">❌ Hitilafu ya Mtandao Imejitokeza! </h3>
+    <h4 style="color: #e74c3c; margin-top: 15px;">❌ Hitilafu ya Mtandao Imejitokeza! </h4>
     <p style="color: #57606f; line-height: 1.5; margin-bottom: 25px;"><?php echo htmlspecialchars($error_message); ?></p>
     <a href="index.php" class="btn-done" style="background: #e74c3c;">Jaribu</a>
     <br><br><div class="footer">"We bring the world at your finger tips" </div>
@@ -264,7 +264,7 @@ try {
     <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
     <div id="payment-pending-view">
-        <h2 style="color: blue; margin-top: 0;">Ombi La Malipo Umetumiwa</h2>
+        <h4 style="color: blue; margin-top: 0;">Ombi La Malipo Umetumiwa</h4>
         <div class="spinner"></div>
         <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 14px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
             <marquee hspace="-45" behavior="scroll" direction="left" style="font-size: 14px; font-weight: bold; color: #3498db;">
@@ -273,7 +273,7 @@ try {
         </div>
     </div>
     <div id="payment-success-view" style="display: none;">
-        <h2 class="success-title" style="color: #2ecc71; margin-top: 0;">✔ Malipo Yamekamilika!</h2> 
+        <h4 class="success-title" style="color: #2ecc71; margin-top: 0;">✔ Malipo Yamekamilika!</h4> 
         
         <!-- UPDATED TEXT LAYER WITH DYNAMIC PHP VALUES -->
         <p style="color: black; font-weight: 500; margin-bottom: 20px; font-size: 11px; line-height: 1.6; text-align: justify; padding: 0 5px;">
