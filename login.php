@@ -260,7 +260,7 @@ try {
     <img src="logo.png" alt="Water Point Logo" style="max-width: 250px; height: auto; object-fit: contain; margin-bottom: 1px;">
 
     <div id="payment-pending-view">
-        <h3 style="color: blue; margin-top: 0;">Ombi La Malipo Umetumiwa</h3>
+        <h2 style="color: blue; margin-top: 0;">Ombi La Malipo Umetumiwa</h2>
         <div class="spinner"></div>
         <div id="status-loading-container" style="background: #e8f4fd; border: 2px dashed #3498db; border-radius: 8px; padding: 14px; min-height: 55px; display: flex; align-items: center; justify-content: center; box-sizing: border-box;">
             <marquee hspace="-45" behavior="scroll" direction="left" style="font-size: 14px; font-weight: bold; color: #3498db;">
@@ -269,7 +269,7 @@ try {
         </div>
     </div>
     <div id="payment-success-view" style="display: none;">
-        <h3 class="success-title" style="color: #2ecc71; margin-top: 0;">✔ Malipo Yamekamilika!</h3> 
+        <h2 class="success-title" style="color: #2ecc71; margin-top: 0;">✔ Malipo Yamekamilika!</h2> 
         
         <!-- UPDATED TEXT LAYER WITH DYNAMIC PHP VALUES -->
         <p style="color: black; font-weight: 500; margin-bottom: 20px; font-size: 11px; line-height: 1.6; text-align: justify; padding: 0 5px;">
@@ -355,7 +355,7 @@ function checkLiveStatus() {
                 } else {
                     // Fallback: If your page elements have different names, hide the whole container
                     document.body.innerHTML = `<div style='background:white; padding:40px; border-radius:12px; text-align:center; max-width:400px; margin:50px auto; box-shadow:0 4px 12px rgba(0,0,0,0.1); font-family:sans-serif;'>
-                        <h2 style='color:#2ecc71;'>✔ Malipo Yamekamilika!</h2>
+                        <h3 style='color:#2ecc71;'>✔ Malipo Yamekamilika!</h3>
                         <p>Voucher Code yako ni:</p>
                         <div style='font-size:26px; font-weight:bold; color:blue; padding:15px; background:#f0f4f8; border:2px dashed #3498db; margin:20px 0;'>${data.voucherCode || data.vouchercode}</div>
                         <button style='background:#2ecc71; color:white; border:none; padding:12px; width:100%; border-radius:6px; font-weight:bold; cursor:pointer;' onclick='window.location.href="https://5wifi.net"'>HODI</button>
