@@ -12,13 +12,11 @@ $db_name = getenv('MYSQLDATABASE') ?: 'railway';
 // 2. CAPTURE DATA SENT FROM INDEX.PHP
 $phone  = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : '';
 $amount = isset($_POST['amount']) ? trim($_POST['amount']) : '1000'; 
-
 $amount = str_replace(',', '', $amount);
 
 if (substr($phone, 0, 1) === '0') {
     $phone = '255' . substr($phone, 1);
 }
-
 $routingPrefix = substr($phone, 3, 2); 
 
 if (in_array($routingPrefix, ['74', '75', '76', '14'])) {
@@ -48,7 +46,6 @@ try {
     // STEPS 1 & 2: DATABASE CHECK & RESERVATION
     // ==========================================
     $pdo->beginTransaction();
-    
     $stmt = $pdo->prepare("SELECT id, voucher_code FROM vouchers WHERE price_tier = :amount AND status = 'available' LIMIT 1 FOR UPDATE");
     $stmt->execute(['amount' => $amount]);
     $voucher = $stmt->fetch();
@@ -66,8 +63,6 @@ try {
         // Dynamic variable assignments for your success message
         $purchased_price = number_format($amount); // Formats 1000 to 1,000
         $purchased_duration = "Saa 1 (Hour 1)";    // Default fallback
-        
-        // Dynamically assign duration based on the package price tier
         if ($amount == 500) {
             $purchased_duration = "Masaa 6";
         } elseif ($amount == 1000) {
@@ -76,9 +71,18 @@ try {
             $purchased_duration = "Siku 2";
         } elseif ($amount == 4000) {
             $purchased_duration = "Siku 5";
+        } elseif ($amount == 5000) {
+            $purchased_duration = "Siku 7";
+        } elseif ($amount == 7000) {
+            $purchased_duration = "Siku 10";
+        } elseif ($amount == 9000) {
+            $purchased_duration = "Siku 13";
+         } elseif ($amount == 10000) {
+            $purchased_duration = "Siku 15";
+        } elseif ($amount == 20000) {
+            $purchased_duration = "Siku 30";
         }
 
-        
         // 2. Update status and log the customer phone number seamlessly
         $updateStmt = $pdo->prepare("UPDATE vouchers SET status = 'assigned', assigned_at = NOW(), transaction_id = :tx_id, customer_phone = :phone WHERE id = :id");
         $updateStmt->execute([
