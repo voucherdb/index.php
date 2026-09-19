@@ -1,0 +1,13 @@
+{
+  "$schema": "https://railway.app",
+  "build": {
+    "builder": "NIXPACKS",
+    "nixpkgsArchive": "latest"
+  },
+  "deploy": {
+    "startCommand": "php -S 0.0.0.0:$PORT",
+    "env": {
+      "NIXPACKS_PHP_EXTENSIONS": "mysqli,pdo_mysql"
+    }
+  }
+}
