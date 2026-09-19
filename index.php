@@ -55,7 +55,7 @@ if (!$dbResult) {
     // 1. Build your alert text content bundle
     $alertText  = "⚠️ TANConnect WiFi Alert ⚠️\n";
     $alertText .= "Voucher Tier OUT OF STOCK!\n";
-    $alertText .= "• Price Tier: " . number_format($amount) . " TZS\n";
+    $alertText .= "• Price Tier: " . number_format((float)($amount ?? 0)) . " TZS\n";
     $alertText .= "• Time: " . date("Y-m-d H:i:s");
 
 
