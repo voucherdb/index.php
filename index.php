@@ -1,27 +1,5 @@
 
 <?php
-// 1. Start the session to track the user's flow
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
-/**
- * GATEKEEPER 1: Ensure they have a valid mobile number in their request or session.
- */
-$mobileFromGet  = isset($_GET['customer_phone']) ? trim($_GET['customer_phone']) : null;
-$mobileFromPost = isset($_POST['customer_phone']) ? trim($_POST['customer_phone']) : null;
-$mobileFromSession = isset($_SESSION['user_mobile']) ? $_SESSION['user_mobile'] : null;
-
-// Combine them to see if a mobile number exists anywhere
-$activeMobile = $mobileFromGet ?? $mobileFromPost ?? $mobileFromSession;
-
-// If NO mobile number is found, block them right here at the gate!
-if (empty($activeMobile)) {
-    header("Location: https://www.tanconnect.co.tz"); 
-    exit();
-}
-?>
-
-<?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
