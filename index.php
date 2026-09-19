@@ -42,7 +42,7 @@ if ($conn->connect_error) {
     die("Database connection failed: " . $conn->connect_error);
 }
 
-$stmt = $conn->prepare("SELECT id, voucher_code FROM wifi_vouchers WHERE price_tier = ? AND status = 'AVAILABLE' LIMIT 1");
+$stmt = $conn->prepare("SELECT id, voucher_code FROM vouchers WHERE price_tier = ? AND status = 'AVAILABLE' LIMIT 1");
 $stmt->bind_param("i", $amount);
 $stmt->execute();
 $dbResult = $stmt->get_result()->fetch_assoc();
